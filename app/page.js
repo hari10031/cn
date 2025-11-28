@@ -62,7 +62,7 @@ export default function Home() {
                 <header className={styles.header}>
                     <h1 className={styles.title}>Question Answer Portal</h1>
                     <p className={styles.subtitle}>
-                        Specially Made for One Particular Person ...
+                        Specially Made for ..... 👀🙄
                     </p>
                 </header>
 
