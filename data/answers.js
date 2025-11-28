@@ -1,37 +1,39 @@
 export const answersData = {
-    1: {
-        a: `// React useState Hook Demo
-import React, { useState } from 'react';
+  1: {
+    a: `// UseStateDemo.js
+import { useState } from "react"
 
-function Counter() {
-  const [count, setCount] = useState(0);
+function UseStateDemo() {
+  let [count, setCount] = useState(0);
+  const increase = () => setCount(++count)
+  const decrease = () => setCount(--count)
   
   return (
-    <div>
-      <h1>Count: {count}</h1>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={() => setCount(count - 1)}>Decrement</button>
-      <button onClick={() => setCount(0)}>Reset</button>
+    <div align='center'>
+      <button onClick={increase}>Increment</button>
+      &nbsp;&nbsp;&nbsp;
+      {count}&nbsp;&nbsp;&nbsp;
+      <button onClick={decrease}>Decrement</button>
+    </div>
+  )
+}
+
+export default UseStateDemo`,
+    b: `// App.js
+import UseStateDemo from "./UseStateDemo";
+
+function App() {
+  return (
+    <div align="center">
+      <UseStateDemo/>
     </div>
   );
 }
 
-export default Counter;`,
-        b: `// Node.js URL Module Demo
-const url = require('url');
-
-const myUrl = 'https://example.com:8080/path?id=123&name=John';
-
-const parsedUrl = url.parse(myUrl, true);
-
-console.log('Protocol:', parsedUrl.protocol);
-console.log('Hostname:', parsedUrl.hostname);
-console.log('Port:', parsedUrl.port);
-console.log('Pathname:', parsedUrl.pathname);
-console.log('Query:', parsedUrl.query);`
-    },
-    2: {
-        a: `// React JSX Demo
+export default App;`
+  },
+  2: {
+    a: `// React JSX Demo
 import React from 'react';
 
 function JSXDemo() {
@@ -50,7 +52,7 @@ function JSXDemo() {
 }
 
 export default JSXDemo;`,
-        b: `// Node.js Fetch and Display Student Records from MongoDB
+    b: `// Node.js Fetch and Display Student Records from MongoDB
 const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
@@ -80,9 +82,9 @@ async function fetchStudents() {
 }
 
 fetchStudents();`
-    },
-    3: {
-        a: `// React Events Demo
+  },
+  3: {
+    a: `// React Events Demo
 import React, { useState } from 'react';
 
 function EventsDemo() {
@@ -109,7 +111,7 @@ function EventsDemo() {
 }
 
 export default EventsDemo;`,
-        b: `// Node.js Append to File
+    b: `// Node.js Append to File
 const fs = require('fs');
 
 const data = "\\nNew line appended to file";
@@ -118,9 +120,9 @@ fs.appendFile('output.txt', data, (err) => {
   if (err) throw err;
   console.log('Data appended successfully!');
 });`
-    },
-    4: {
-        a: `// Node.js MongoDB Insert Employee
+  },
+  4: {
+    a: `// Node.js MongoDB Insert Employee
 const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
@@ -143,7 +145,7 @@ async function insertEmployee() {
 }
 
 insertEmployee();`,
-        b: `// React Props and State Demo
+    b: `// React Props and State Demo
 import React, { useState } from 'react';
 
 function Child({ name, age }) {
@@ -164,9 +166,9 @@ function Parent() {
 }
 
 export default Parent;`
-    },
-    5: {
-        a: `// React Styling Demo
+  },
+  5: {
+    a: `// React Styling Demo
 import React from 'react';
 import './App.css';
 
@@ -189,7 +191,7 @@ function StyledComponent() {
 }
 
 export default StyledComponent;`,
-        b: `// MongoDB Student CRUD Operations (Shell)
+    b: `// MongoDB Student CRUD Operations (Shell)
 // 1. Create
 db.students.insertOne({ name: "Alice", grade: "A", age: 20 })
 
@@ -205,9 +207,9 @@ db.students.updateOne(
 
 // 4. Delete
 db.students.deleteOne({ name: "Alice" })`
-    },
-    6: {
-        a: `// React useContext Hook Demo
+  },
+  6: {
+    a: `// React useContext Hook Demo
 import React, { createContext, useContext, useState } from 'react';
 
 const ThemeContext = createContext();
@@ -234,7 +236,7 @@ function App() {
 }
 
 export default App;`,
-        b: `// Node.js MongoDB Delete Employee
+    b: `// Node.js MongoDB Delete Employee
 const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
@@ -252,9 +254,9 @@ async function deleteEmployee() {
 }
 
 deleteEmployee();`
-    },
-    7: {
-        a: `// Node.js Create and Write File
+  },
+  7: {
+    a: `// Node.js Create and Write File
 const fs = require('fs');
 
 const data = 'This is the file content\\nLine 2\\nLine 3';
@@ -263,7 +265,7 @@ fs.writeFile('newfile.txt', data, (err) => {
   if (err) throw err;
   console.log('File created and written successfully!');
 });`,
-        b: `// React Conditional Rendering
+    b: `// React Conditional Rendering
 import React, { useState } from 'react';
 
 function ConditionalDemo() {
@@ -282,9 +284,9 @@ function ConditionalDemo() {
 }
 
 export default ConditionalDemo;`
-    },
-    8: {
-        a: `// React Components Demo
+  },
+  8: {
+    a: `// React Components Demo
 import React from 'react';
 
 function Header() {
@@ -310,7 +312,7 @@ function App() {
 }
 
 export default App;`,
-        b: `// MongoDB CRUD using Compass
+    b: `// MongoDB CRUD using Compass
 1. Open MongoDB Compass
 2. Connect to mongodb://localhost:27017
 3. Create Database: company
@@ -320,9 +322,9 @@ export default App;`,
 6. Find: Use filter { "position": "Developer" }
 7. Update: Click on document > Edit > Modify > Update
 8. Delete: Click on document > Delete`
-    },
-    9: {
-        a: `// Node.js HTTP Module Demo
+  },
+  9: {
+    a: `// Node.js HTTP Module Demo
 const http = require('http');
 
 const server = http.createServer((req, res) => {
@@ -334,7 +336,7 @@ const server = http.createServer((req, res) => {
 server.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });`,
-        b: `// Express.js Load HTML Page
+    b: `// Express.js Load HTML Page
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -353,9 +355,9 @@ app.listen(3000, () => {
 <head><title>My Page</title></head>
 <body><h1>Welcome to Express!</h1></body>
 </html>`
-    },
-    10: {
-        a: `// React List Rendering Demo
+  },
+  10: {
+    a: `// React List Rendering Demo
 import React from 'react';
 
 function ListDemo() {
@@ -379,7 +381,7 @@ function ListDemo() {
 }
 
 export default ListDemo;`,
-        b: `// Express.js with EJS Template Engine
+    b: `// Express.js with EJS Template Engine
 const express = require('express');
 const app = express();
 
@@ -405,9 +407,9 @@ app.listen(3000);
   </ul>
 </body>
 </html>`
-    },
-    11: {
-        a: `// Express.js Arithmetic Form Handling
+  },
+  11: {
+    a: `// Express.js Arithmetic Form Handling
 const express = require('express');
 const app = express();
 
@@ -443,7 +445,7 @@ app.post('/calculate', (req, res) => {
 });
 
 app.listen(3000);`,
-        b: `// Node.js prompt-sync Module
+    b: `// Node.js prompt-sync Module
 const prompt = require('prompt-sync')();
 
 console.log('Welcome to the Calculator!');
@@ -463,9 +465,9 @@ if (choice === 'yes') {
 } else {
   console.log('Goodbye!');
 }`
-    },
-    12: {
-        a: `// Node.js Read File
+  },
+  12: {
+    a: `// Node.js Read File
 const fs = require('fs');
 
 // Asynchronous read
@@ -477,7 +479,7 @@ fs.readFile('input.txt', 'utf8', (err, data) => {
 // Synchronous read
 const data = fs.readFileSync('input.txt', 'utf8');
 console.log(data);`,
-        b: `// Express.js Multiple Routes and Navigation
+    b: `// Express.js Multiple Routes and Navigation
 const express = require('express');
 const app = express();
 
@@ -506,9 +508,9 @@ app.get('/contact', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Server running'));`
-    },
-    13: {
-        a: `// Node.js Delete Employee from MongoDB
+  },
+  13: {
+    a: `// Node.js Delete Employee from MongoDB
 const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
@@ -531,7 +533,7 @@ async function deleteEmployee() {
 }
 
 deleteEmployee();`,
-        b: `// React Components Demo
+    b: `// React Components Demo
 import React from 'react';
 
 const Button = ({ text, onClick }) => (
@@ -556,9 +558,9 @@ function App() {
 }
 
 export default App;`
-    },
-    14: {
-        a: `// MongoDB CRUD Operations (Shell)
+  },
+  14: {
+    a: `// MongoDB CRUD Operations (Shell)
 // 1. Create Database and Collection
 use company
 db.createCollection("employees")
@@ -588,7 +590,7 @@ db.employees.updateMany(
 // 5. Delete
 db.employees.deleteOne({ name: "Bob" })
 db.employees.deleteMany({ age: { $lt: 30 } })`,
-        b: `// React Styling Demo
+    b: `// React Styling Demo
 import React from 'react';
 import styled from 'styled-components';
 
@@ -622,9 +624,9 @@ function StyledApp() {
 }
 
 export default StyledApp;`
-    },
-    15: {
-        a: `// React useContext Hook Demo
+  },
+  15: {
+    a: `// React useContext Hook Demo
 import React, { createContext, useContext, useState } from 'react';
 
 const UserContext = createContext();
@@ -658,7 +660,7 @@ function App() {
 }
 
 export default App;`,
-        b: `// Node.js Insert Employee to MongoDB
+    b: `// Node.js Insert Employee to MongoDB
 const { MongoClient } = require('mongodb');
 
 const url = 'mongodb://localhost:27017';
@@ -689,5 +691,5 @@ async function insertEmployees() {
 }
 
 insertEmployees();`
-    }
+  }
 };
