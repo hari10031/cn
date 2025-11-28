@@ -1,7 +1,9 @@
 export const answersData = {
   1: {
-    a: `// UseStateDemo.js
-import { useState } from "react"
+    a: [
+      {
+        title: 'UseStateDemo.js',
+        code: `import { useState } from "react"
 
 function UseStateDemo() {
   let [count, setCount] = useState(0);
@@ -18,7 +20,23 @@ function UseStateDemo() {
   )
 }
 
-export default UseStateDemo`,
+export default UseStateDemo`
+      },
+      {
+        title: 'App.js',
+        code: `import UseStateDemo from "./UseStateDemo";
+
+function App() {
+  return (
+    <div align="center">
+      <UseStateDemo/>
+    </div>
+  );
+}
+
+export default App;`
+      }
+    ],
     b: `// Node.js URL Module Demo
 const { URL } = require('url');
 const str = "https://user:abcd@www.example.com:4000/abc/xyz/sample.txt?value1=10&value2=20#demo"

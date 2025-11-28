@@ -9,11 +9,13 @@ export default function Home() {
     const [selectedSet, setSelectedSet] = useState(null);
     const [copiedA, setCopiedA] = useState(false);
     const [copiedB, setCopiedB] = useState(false);
+    const [copiedBlocks, setCopiedBlocks] = useState({});
 
     const handleSetSelect = (setNum) => {
         setSelectedSet(setNum);
         setCopiedA(false);
         setCopiedB(false);
+        setCopiedBlocks({});
     };
 
     const copyToClipboard = async (text, question) => {
@@ -26,6 +28,18 @@ export default function Home() {
                 setCopiedB(true);
                 setTimeout(() => setCopiedB(false), 2000);
             }
+        } catch (err) {
+            console.error('Failed to copy:', err);
+        }
+    };
+
+    const copyCodeBlock = async (code, blockKey) => {
+        try {
+            await navigator.clipboard.writeText(code);
+            setCopiedBlocks({ ...copiedBlocks, [blockKey]: true });
+            setTimeout(() => {
+                setCopiedBlocks(prev => ({ ...prev, [blockKey]: false }));
+            }, 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
         }
@@ -73,23 +87,52 @@ export default function Home() {
                         <div className={styles.questionCard}>
                             <div className={styles.questionHeader}>
                                 <span className={styles.questionLabel}>Question A</span>
-                                <button
-                                    onClick={() => copyToClipboard(currentAnswers.a, 'a')}
-                                    className={`${styles.copyButton} ${copiedA ? styles.copied : ''}`}
-                                >
-                                    <svg className={styles.copyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {copiedA ? (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        ) : (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        )}
-                                    </svg>
-                                    {copiedA ? 'Copied!' : 'Copy Answer'}
-                                </button>
                             </div>
                             <p className={styles.questionText}>{currentQuestionSet.questionA}</p>
                             <div className={styles.answerLabel}>Answer:</div>
-                            <pre className={styles.codeBlock}><code>{currentAnswers.a}</code></pre>
+
+                            {Array.isArray(currentAnswers.a) ? (
+                                // Handle array of code blocks with individual clipboard buttons
+                                currentAnswers.a.map((block, index) => (
+                                    <div key={index} className={styles.codeBlockContainer}>
+                                        <div className={styles.codeBlockHeader}>
+                                            <span className={styles.codeBlockTitle}>{block.title}</span>
+                                            <button
+                                                onClick={() => copyCodeBlock(block.code, `a-${index}`)}
+                                                className={`${styles.copyButton} ${styles.smallCopyButton} ${copiedBlocks[`a-${index}`] ? styles.copied : ''}`}
+                                            >
+                                                <svg className={styles.copyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    {copiedBlocks[`a-${index}`] ? (
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    ) : (
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    )}
+                                                </svg>
+                                                {copiedBlocks[`a-${index}`] ? 'Copied!' : 'Copy'}
+                                            </button>
+                                        </div>
+                                        <pre className={styles.codeBlock}><code>{block.code}</code></pre>
+                                    </div>
+                                ))
+                            ) : (
+                                // Handle single string format (backward compatibility)
+                                <>
+                                    <button
+                                        onClick={() => copyToClipboard(currentAnswers.a, 'a')}
+                                        className={`${styles.copyButton} ${copiedA ? styles.copied : ''}`}
+                                    >
+                                        <svg className={styles.copyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            {copiedA ? (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            ) : (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            )}
+                                        </svg>
+                                        {copiedA ? 'Copied!' : 'Copy Answer'}
+                                    </button>
+                                    <pre className={styles.codeBlock}><code>{currentAnswers.a}</code></pre>
+                                </>
+                            )}
                         </div>
 
                         {/* Question B */}
