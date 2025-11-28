@@ -62,7 +62,7 @@ export default function Home() {
                 <header className={styles.header}>
                     <h1 className={styles.title}>Question Answer Portal</h1>
                     <p className={styles.subtitle}>
-                        Select a set number to view questions and copy answers
+                        Specially Made for One Particular Person ...
                     </p>
                 </header>
 
