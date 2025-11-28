@@ -207,75 +207,157 @@ file.appendFileSync(fname, data)
 console.log("Data appended to file")`
   },
   4: {
-    a: `// Node.js MongoDB Insert Employee
-const { MongoClient } = require('mongodb');
+    a: `// MongoDB Insert Many Records
+const mdb = require("mongodb")
+const prompt = require("prompt-sync")()
+const mclient = mdb.MongoClient
+const url = "mongodb://localhost:27017"
 
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-async function insertEmployee() {
-  await client.connect();
-  const db = client.db('company');
-  const collection = db.collection('employees');
-  
-  const employee = {
-    name: "John Doe",
-    position: "Developer",
-    salary: 60000
-  };
-  
-  const result = await collection.insertOne(employee);
-  console.log('Employee inserted:', result.insertedId);
-  await client.close();
+async function connectDB() {
+  try {
+    const conn = await mclient.connect(url);
+    console.log("Mongodb connection success...")
+    let n = prompt("How many records you want to insert?")
+    n = parseInt(n)
+    const test = conn.db("test")
+    const std = test.collection("student")
+    let query = []
+    for(let i=0; i<n; i++) {
+      console.log(\`Enter details of \${i} record:\\n=====\\n \`)
+      let id = parseInt(prompt("enter id:"));
+      let name = prompt("enter name:");
+      let marks = parseInt(prompt("enter marks:"))
+      let branch = prompt("enter branch:")
+      let city = prompt("enter city:")
+      let record = {
+        "_id":id, "name":name, "marks":marks, "branch":branch, "city":city
+      }
+      query.push(record)
+    }
+    await std.insertMany(query);
+    console.log(n + " records inserted")
+    conn.close();
+  } catch (error) {
+    console.log("Error=" + error)
+  }
 }
 
-insertEmployee();`,
-    b: `// React Props and State Demo
-import React, { useState } from 'react';
-
-function Child({ name, age }) {
-  return <p>{name} is {age} years old</p>;
-}
-
-function Parent() {
-  const [count, setCount] = useState(0);
-  
+connectDB()`,
+    b: [
+      {
+        title: 'Empprops.js',
+        code: `function Empprops(props) {
   return (
     <div>
-      <Child name="Alice" age={25} />
-      <Child name="Bob" age={30} />
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <h3>Employee details using props are:</h3>
+      <hr/>
+      <p>Name:{props.name}<br/>
+      Eid:{props.eid}<br/>
+      Salary:{props.salary}
+      </p>
     </div>
   );
 }
 
-export default Parent;`
+export default Empprops;`
+      },
+      {
+        title: 'Studentcomp.js',
+        code: `import { Component } from "react";
+
+class Studentcomp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {rno:123, name:"smith", marks:70, branch:"CSE-DS"}
+  }
+  
+  change = () => {
+    this.setState({rno:345, name:"SMITH", marks:80, branch:"CSE-DS"})
+  }
+  
+  render() {
+    return (
+      <div>
+        <h3>Student Details using State</h3><hr/>
+        <p>Roll number:{this.state.rno}<br/>
+        Name:{this.state.name}<br/>
+        Branch:{this.state.branch}<br/>
+        Marks:{this.state.marks}<br/>
+        </p>
+        <button onClick={this.change}>Click to change</button>
+      </div>
+    );
+  }
+}
+
+export default Studentcomp;`
+      },
+      {
+        title: 'App.js',
+        code: `import './App.css';
+import Empprops from './propsdemo/Empprops';
+import Studentcomp from './propsdemo/Studentcomp';
+
+function App() {
+  return (
+    <div className="App">
+      <Empprops name="John" eid={123} salary={6000}/>
+      <Studentcomp/>
+    </div>
+  );
+}
+
+export default App;`
+      }
+    ]
   },
   5: {
-    a: `// React Styling Demo
-import React from 'react';
-import './App.css';
+    a: [
+      {
+        title: 'Sample.css',
+        code: `p {
+  color: blue;
+  border: 5px solid green;
+  background-color: bisque;
+  font-style: italic;
+  font-size: 40px;
+  margin-left: 400px;
+  margin-right: 400px;
+}`
+      },
+      {
+        title: 'Rules.module.css',
+        code: `.rule1 {
+  color: white;
+  background-color: darkmagenta;
+  border: 10px dotted yellow;
+  margin-left: 300px;
+  margin-right: 300px;
+  font-size: 40px;
+}`
+      },
+      {
+        title: 'StyleDemo.js',
+        code: `import "./Sample.css"
+import styles from "./Rules.module.css"
 
-function StyledComponent() {
-  const inlineStyle = {
-    color: 'blue',
-    fontSize: '20px',
-    padding: '10px'
-  };
-  
+function StyleDemo() {
   return (
     <div>
-      <h1 style={inlineStyle}>Inline Styled</h1>
-      <p className="external-style">External CSS</p>
-      <div style={{ backgroundColor: 'lightgray', margin: '10px' }}>
-        Object Style
-      </div>
+      <h1 style={{color:"red", fontSize:"30px"}}>
+        This is H1 tag with Inline Style
+      </h1>
+      <p>This is paragraph with external style</p>
+      <h2 className={styles.rule1}>
+        This is H2 tag with external Module style
+      </h2>
     </div>
   );
 }
 
-export default StyledComponent;`,
+export default StyleDemo;`
+      }
+    ],
     b: `// MongoDB Student CRUD Operations (Shell)
 // 1. Create
 db.students.insertOne({ name: "Alice", grade: "A", age: 20 })
@@ -294,109 +376,199 @@ db.students.updateOne(
 db.students.deleteOne({ name: "Alice" })`
   },
   6: {
-    a: `// React useContext Hook Demo
-import React, { createContext, useContext, useState } from 'react';
+    a: [
+      {
+        title: 'Parent.js',
+        code: `import Child from "./Child"
 
-const ThemeContext = createContext();
+function Parent() {
+  return (<>
+    <h3>Parent Component</h3>
+    <Child/>
+  </>)
+}
+
+export default Parent;`
+      },
+      {
+        title: 'Child.js',
+        code: `import GrandChild from "./GrandChild"
 
 function Child() {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  return (<>
+    <h3>Child component</h3>
+    <GrandChild/>
+  </>)
+}
+
+export default Child;`
+      },
+      {
+        title: 'GrandChild.js',
+        code: `import { UserNameContext } from "./App";
+import { useContext } from "react";
+
+function GrandChild() {
+  let data = useContext(UserNameContext);
+  return (<>
+    <h3>Grand Child component</h3>
+    <h3>Data Inherited from Main Application={data}</h3>
+  </>)
+}
+
+export default GrandChild;`
+      },
+      {
+        title: 'App.js',
+        code: `import Parent from "./Parent"
+import React from "react";
+
+export const UserNameContext = React.createContext();
+
+function App() {
   return (
-    <div style={{ background: theme === 'dark' ? '#333' : '#fff' }}>
-      <p>Current theme: {theme}</p>
-      <button onClick={toggleTheme}>Toggle Theme</button>
+    <div align="center">
+      <UserNameContext.Provider value={"MVSR"}>
+        <Parent/>
+      </UserNameContext.Provider>
     </div>
   );
 }
 
-function App() {
-  const [theme, setTheme] = useState('light');
-  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
-  
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <Child />
-    </ThemeContext.Provider>
-  );
+export default App;`
+      }
+    ],
+    b: `// MongoDB Delete Many with Dynamic Search
+const mdb = require("mongodb")
+const prompt = require("prompt-sync")()
+const mclient = mdb.MongoClient
+const url = "mongodb://localhost:27017"
+
+async function connectDB() {
+  try {
+    const conn = await mclient.connect(url)
+    const test = conn.db("test")
+    const std = test.collection("student")
+    console.log("Mongodb connection success...")
+    let query1 = {}
+    let skey = prompt("Enter search key:")
+    let svalue = prompt("Enter search value:")
+    query1[skey] = svalue
+    await std.deleteMany(query1)
+    conn.close()
+    console.log("Record(s) Deleted")
+  } catch (error) {
+    console.log("Error=" + error)
+  }
 }
 
-export default App;`,
-    b: `// Node.js MongoDB Delete Employee
-const { MongoClient } = require('mongodb');
-
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-async function deleteEmployee() {
-  await client.connect();
-  const db = client.db('company');
-  const collection = db.collection('employees');
-  
-  const result = await collection.deleteOne({ name: "John Doe" });
-  console.log('Deleted count:', result.deletedCount);
-  
-  await client.close();
-}
-
-deleteEmployee();`
+connectDB()`
   },
   7: {
     a: `// Node.js Create and Write File
-const fs = require('fs');
-
-const data = 'This is the file content\\nLine 2\\nLine 3';
-
-fs.writeFile('newfile.txt', data, (err) => {
-  if (err) throw err;
-  console.log('File created and written successfully!');
-});`,
-    b: `// React Conditional Rendering
-import React, { useState } from 'react';
-
-function ConditionalDemo() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showMessage, setShowMessage] = useState(true);
-  
-  return (
-    <div>
-      {isLoggedIn ? <h1>Welcome Back!</h1> : <h1>Please Log In</h1>}
-      {showMessage && <p>This is a conditional message</p>}
-      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
-        {isLoggedIn ? 'Logout' : 'Login'}
-      </button>
-    </div>
-  );
+const file = require("fs")
+const prompt = require("prompt-sync")()
+let fname = prompt("Enter file name to create:")
+let data = prompt("Enter some text:")
+file.writeFileSync(fname, data)
+console.log("File created and data written to file")`,
+    b: [
+      {
+        title: 'Conditional.js',
+        code: `function Conditional(props) {
+  let k = props.value;
+  if (k)
+    return <h1>True Conditional tag executed</h1>
+  else
+    return <h1>False Conditional tag executed</h1>
 }
 
-export default ConditionalDemo;`
-  },
-  8: {
-    a: `// React Components Demo
-import React from 'react';
-
-function Header() {
-  return <header><h1>My App</h1></header>;
+export default Conditional;`
+      },
+      {
+        title: 'List.js',
+        code: `function List() {
+  let items = ["CSE", "CSIT", "DS", "IOTT", "AIML"]
+  let temp = []
+  for (let k=0; k<items.length; k++)
+    temp.push(<li>{items[k]}</li>)
+  return (<>
+    <h3>Displaying List using for loop</h3><br/>
+    <ol>{temp}</ol>
+    <hr/>
+    <h3>Displaying List using map function</h3><br/>
+    <ul>
+      {
+        items.map((value) => <li>{value}</li>)
+      }
+    </ul>
+  </>)
 }
 
-function Footer() {
-  return <footer><p>© 2024</p></footer>;
-}
-
-function Content() {
-  return <main><p>Main content here</p></main>;
-}
+export default List;`
+      },
+      {
+        title: 'App.js',
+        code: `import Conditional from "./Conditional";
+import List from "./List";
 
 function App() {
   return (
-    <div>
-      <Header />
-      <Content />
-      <Footer />
+    <div align="center">
+      <h3>React JS Program to demonstrate Conditional Rendering and List Rendering</h3><hr/>
+      <Conditional value={true}/>
+      <Conditional value={false}/>
+      <List/>
     </div>
   );
 }
 
-export default App;`,
+export default App;`
+      }
+    ]
+  },
+  8: {
+    a: [
+      {
+        title: 'FunctionDemo.js',
+        code: `function FunctionDemo() {
+  return <h1>Function Component Executed</h1>
+}
+
+export default FunctionDemo;`
+      },
+      {
+        title: 'ClassComDemo.js',
+        code: `import { Component } from "react";
+
+class ClassComDemo extends Component {
+  render() {
+    return <h1>Class Component Executed</h1>
+  }
+}
+
+export default ClassComDemo;`
+      },
+      {
+        title: 'App.js',
+        code: `import './App.css';
+import FunctionDemo from './FunctionDemo';
+import ClassComDemo from './ClassComDemo';
+
+function App() {
+  return (
+    <div className="App">
+      <h1>ReactJS Application to demonstrate Components</h1>
+      <hr/>
+      <FunctionDemo/>
+      <ClassComDemo/>
+    </div>
+  );
+}
+
+export default App;`
+      }
+    ],
     b: `// MongoDB CRUD using Compass
 1. Open MongoDB Compass
 2. Connect to mongodb://localhost:27017
