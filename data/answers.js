@@ -51,55 +51,75 @@ console.log("Password=" + myUrl.password);
 console.log("Protocol=" + myUrl.protocol);`
   },
   2: {
-    a: `// React JSX Demo
-import React from 'react';
+    a: [
+      {
+        title: 'WithJsx.js',
+        code: `import React from "react";
 
-function JSXDemo() {
-  const name = "John";
-  const age = 25;
-  
+function WithJsx() {
   return (
-    <div className="container">
-      <h1>Hello, {name}!</h1>
-      <p>You are {age} years old.</p>
-      <ul>
-        {[1, 2, 3].map(num => <li key={num}>Item {num}</li>)}
-      </ul>
+    <div align="center">
+      <h1>This is H1 tag executed using JSX</h1>
+      <p>This is paragraph tag executed using JSX</p>
+    </div>
+  )
+}
+
+export default WithJsx;`
+      },
+      {
+        title: 'WithoutJsx.js',
+        code: `import React from "react";
+
+function WithoutJsx() {
+  let k1 = React.createElement("h1", null, "This is H1 tag executed without JSX")
+  let k2 = React.createElement("p", null, "This is Paragraph tag executed without JSX")
+  let k3 = React.createElement("div", {"align":"center"}, k1, k2);
+  return k3;
+}
+
+export default WithoutJsx;`
+      },
+      {
+        title: 'App.js',
+        code: `import WithJsx from './WithJsx';
+import WithoutJsx from './WithoutJsx';
+
+function App() {
+  return (
+    <div align="center">
+      <h3>React JS Program to demonstrate JSX</h3><hr/>
+      <WithJsx/>
+      <WithoutJsx/>
     </div>
   );
 }
 
-export default JSXDemo;`,
-    b: `// Node.js Fetch and Display Student Records from MongoDB
-const { MongoClient } = require('mongodb');
+export default App;`
+      }
+    ],
+    b: `// MongoDB Connection and Fetch Data
+const mdb = require("mongodb")
+const prompt = require("prompt-sync")()
+const mclient = mdb.MongoClient
+const url = "mongodb://localhost:27017"
 
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-async function fetchStudents() {
+async function connectDB() {
   try {
-    await client.connect();
-    console.log('Connected to MongoDB');
-    
-    const db = client.db('school');
-    const collection = db.collection('students');
-    
-    // Fetch all students
-    const students = await collection.find().toArray();
-    
-    console.log('Student Records:');
-    students.forEach(student => {
-      console.log(\`ID: \${student._id}, Name: \${student.name}, Grade: \${student.grade}, Age: \${student.age}\`);
-    });
-    
-  } catch (err) {
-    console.error('Error:', err);
-  } finally {
-    await client.close();
+    const conn = await mclient.connect(url);
+    console.log("Mongodb connection success...")
+    const test = conn.db("test")
+    const std = test.collection("student")
+    let result = await std.find({}).toArray()
+    console.log(result);
+    console.log("Number of records fetched=" + result.length)
+    conn.close()
+  } catch(error) {
+    console.log("Error=" + error)
   }
 }
 
-fetchStudents();`
+connectDB()`
   },
   3: {
     a: `// React Events Demo
