@@ -790,31 +790,47 @@ async function deleteEmployee() {
 }
 
 deleteEmployee();`,
-    b: `// React Components Demo
-import React from 'react';
+    b: [
+      {
+        title: 'FunctionDemo.js',
+        code: `function FunctionDemo() {
+  return <h1>Function Component Executed</h1>
+}
 
-const Button = ({ text, onClick }) => (
-  <button onClick={onClick}>{text}</button>
-);
+export default FunctionDemo;`
+      },
+      {
+        title: 'ClassComDemo.js',
+        code: `import { Component } from "react";
 
-const Card = ({ title, content }) => (
-  <div style={{ border: '1px solid #ccc', padding: '10px' }}>
-    <h3>{title}</h3>
-    <p>{content}</p>
-  </div>
-);
+class ClassComDemo extends Component {
+  render() {
+    return <h1>Class Component Executed</h1>
+  }
+}
+
+export default ClassComDemo;`
+      },
+      {
+        title: 'App.js',
+        code: `import './App.css';
+import FunctionDemo from './FunctionDemo';
+import ClassComDemo from './ClassComDemo';
 
 function App() {
   return (
-    <div>
-      <Card title="Card 1" content="This is card 1" />
-      <Card title="Card 2" content="This is card 2" />
-      <Button text="Click Me" onClick={() => alert('Clicked!')} />
+    <div className="App">
+      <h1>ReactJS Application to demonstrate Components</h1>
+      <hr/>
+      <FunctionDemo/>
+      <ClassComDemo/>
     </div>
   );
 }
 
 export default App;`
+      }
+    ]
   },
   14: {
     a: `// MongoDB CRUD Operations (Shell)
@@ -847,106 +863,151 @@ db.employees.updateMany(
 // 5. Delete
 db.employees.deleteOne({ name: "Bob" })
 db.employees.deleteMany({ age: { $lt: 30 } })`,
-    b: `// React Styling Demo
-import React from 'react';
-import styled from 'styled-components';
-
-const StyledDiv = styled.div\`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-  border-radius: 10px;
+    b: [
+      {
+        title: 'Sample.css',
+        code: `p {
+  color: blue;
+  border: 5px solid green;
+  background-color: bisque;
+  font-style: italic;
+  font-size: 40px;
+  margin-left: 400px;
+  margin-right: 400px;
+}`
+      },
+      {
+        title: 'Rules.module.css',
+        code: `.rule1 {
   color: white;
-\`;
+  background-color: darkmagenta;
+  border: 10px dotted yellow;
+  margin-left: 300px;
+  margin-right: 300px;
+  font-size: 40px;
+}`
+      },
+      {
+        title: 'StyleDemo.js',
+        code: `import "./Sample.css"
+import styles from "./Rules.module.css"
 
-function StyledApp() {
-  const styles = {
-    container: {
-      backgroundColor: '#f0f0f0',
-      padding: '20px',
-      fontFamily: 'Arial'
-    },
-    heading: {
-      color: '#333',
-      fontSize: '24px'
-    }
-  };
-  
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Inline Styles</h1>
-      <StyledDiv>Styled Components</StyledDiv>
-      <p className="css-module">CSS Module Style</p>
-    </div>
-  );
-}
-
-export default StyledApp;`
-  },
-  15: {
-    a: `// React useContext Hook Demo
-import React, { createContext, useContext, useState } from 'react';
-
-const UserContext = createContext();
-
-function Profile() {
-  const { user, setUser } = useContext(UserContext);
+function StyleDemo() {
   return (
     <div>
-      <h2>Profile: {user.name}</h2>
-      <button onClick={() => setUser({ name: 'Jane', age: 28 })}>
-        Change User
-      </button>
+      <h1 style={{color:"red", fontSize:"30px"}}>
+        This is H1 tag with Inline Style
+      </h1>
+      <p>This is paragraph with external style</p>
+      <h2 className={styles.rule1}>
+        This is H2 tag with external Module style
+      </h2>
     </div>
   );
 }
 
-function Display() {
-  const { user } = useContext(UserContext);
-  return <p>Age: {user.age}</p>;
+export default StyleDemo;`
+      }
+    ]
+  },
+  15: {
+    a: [
+      {
+        title: 'Parent.js',
+        code: `import Child from "./Child"
+
+function Parent() {
+  return (<>
+    <h3>Parent Component</h3>
+    <Child/>
+  </>)
 }
 
+export default Parent;`
+      },
+      {
+        title: 'Child.js',
+        code: `import GrandChild from "./GrandChild"
+
+function Child() {
+  return (<>
+    <h3>Child component</h3>
+    <GrandChild/>
+  </>)
+}
+
+export default Child;`
+      },
+      {
+        title: 'GrandChild.js',
+        code: `import { UserNameContext } from "./App";
+import { useContext } from "react";
+
+function GrandChild() {
+  let data = useContext(UserNameContext);
+  return (<>
+    <h3>Grand Child component</h3>
+    <h3>Data Inherited from Main Application={data}</h3>
+  </>)
+}
+
+export default GrandChild;`
+      },
+      {
+        title: 'App.js',
+        code: `import Parent from "./Parent"
+import React from "react";
+
+export const UserNameContext = React.createContext();
+
 function App() {
-  const [user, setUser] = useState({ name: 'John', age: 25 });
-  
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      <Profile />
-      <Display />
-    </UserContext.Provider>
+    <div align="center">
+      <UserNameContext.Provider value={"MVSR"}>
+        <Parent/>
+      </UserNameContext.Provider>
+    </div>
   );
 }
 
-export default App;`,
-    b: `// Node.js Insert Employee to MongoDB
-const { MongoClient } = require('mongodb');
+export default App;`
+      }
+    ],
+    b: `// MongoDB Insert Many Records
+const mdb = require("mongodb")
+const prompt = require("prompt-sync")()
+const mclient = mdb.MongoClient
+const url = "mongodb://localhost:27017"
 
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-async function insertEmployees() {
-  await client.connect();
-  const db = client.db('company');
-  const collection = db.collection('employees');
-  
-  // Insert one
-  const result1 = await collection.insertOne({
-    name: "John Doe",
-    position: "Developer",
-    salary: 60000,
-    department: "IT"
-  });
-  console.log('Inserted ID:', result1.insertedId);
-  
-  // Insert many
-  const result2 = await collection.insertMany([
-    { name: "Alice", position: "Designer", salary: 55000 },
-    { name: "Bob", position: "Manager", salary: 70000 }
-  ]);
-  console.log('Inserted IDs:', result2.insertedIds);
-  
-  await client.close();
+async function connectDB() {
+  try {
+    const conn = await mclient.connect(url);
+    console.log("Mongodb connection success...")
+    let n = prompt("How many records you want to insert?")
+    n = parseInt(n)
+    const test = conn.db("test")
+    const std = test.collection("student")
+    let query = []
+    for(let i=0; i<n; i++) {
+      console.log(\`Enter details of \${i} record:\\n=====\\n \`)
+      let id = parseInt(prompt("enter id:"));
+      let name = prompt("enter name:");
+      let marks = parseInt(prompt("enter marks:"))
+      let branch = prompt("enter branch:")
+      let city = prompt("enter city:")
+      let record = {
+        "_id":id, "name":name, "marks":marks, "branch":branch, "city":city
+      }
+      query.push(record)
+    }
+    await std.insertMany(query);
+    console.log(n + " records inserted")
+    conn.close();
+  } catch (error) {
+    console.log("Error=" + error)
+  }
 }
 
-insertEmployees();`
+connectDB()`
   }
 };
