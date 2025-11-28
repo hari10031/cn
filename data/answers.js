@@ -122,42 +122,89 @@ async function connectDB() {
 connectDB()`
   },
   3: {
-    a: `// React Events Demo
-import React, { useState } from 'react';
+    a: [
+      {
+        title: 'Arithmetic.js',
+        code: `import { Component } from "react";
 
-function EventsDemo() {
-  const [text, setText] = useState('');
-  const [clicked, setClicked] = useState(false);
+class Arithmetic extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {a:0, b:0, c:""}
+  }
   
-  const handleClick = () => setClicked(true);
-  const handleChange = (e) => setText(e.target.value);
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert('Form submitted: ' + text);
-  };
+  changeA = (event) => {this.setState({a:event.target.value})}
+  changeB = (event) => {this.setState({b:event.target.value})}
   
+  add = () => {
+    let x = parseInt(this.state.a);
+    let y = parseInt(this.state.b);
+    this.setState({c:(x+y)})
+  }
+  
+  sub = () => {
+    let x = parseInt(this.state.a);
+    let y = parseInt(this.state.b);
+    this.setState({c:(x-y)})
+  }
+  
+  mul = () => {
+    let x = parseInt(this.state.a);
+    let y = parseInt(this.state.b);
+    this.setState({c:(x*y)})
+  }
+  
+  div = () => {
+    let x = parseInt(this.state.a);
+    let y = parseInt(this.state.b);
+    this.setState({c:(x/y)})
+  }
+  
+  render() {
+    return (
+      <div>
+        <h4>Arithmetic Operations using React Events</h4><hr/>
+        Enter first number:
+        <input type="text" value={this.state.a} onChange={this.changeA}/>
+        <br/>
+        Enter second number:
+        <input type="text" value={this.state.b} onChange={this.changeB}/>
+        <br/>
+        <button onClick={this.add}>Add</button>&nbsp;&nbsp;
+        <button onClick={this.sub}>Subtract</button>&nbsp;&nbsp;
+        <button onClick={this.mul}>Multiply</button>&nbsp;&nbsp;
+        <button onClick={this.div}>Divide</button><br/>
+        Result={this.state.c}
+      </div>
+    );
+  }
+}
+
+export default Arithmetic;`
+      },
+      {
+        title: 'App.js',
+        code: `import './App.css';
+import Arithmetic from './Arithmetic';
+
+function App() {
   return (
-    <div>
-      <button onClick={handleClick}>Click Me</button>
-      {clicked && <p>Button was clicked!</p>}
-      <form onSubmit={handleSubmit}>
-        <input value={text} onChange={handleChange} />
-        <button type="submit">Submit</button>
-      </form>
+    <div className="App">
+      <Arithmetic/>
     </div>
   );
 }
 
-export default EventsDemo;`,
+export default App;`
+      }
+    ],
     b: `// Node.js Append to File
-const fs = require('fs');
-
-const data = "\\nNew line appended to file";
-
-fs.appendFile('output.txt', data, (err) => {
-  if (err) throw err;
-  console.log('Data appended successfully!');
-});`
+const file = require("fs")
+const prompt = require("prompt-sync")()
+let fname = prompt("Enter file name to open:")
+let data = prompt("Enter some text:")
+file.appendFileSync(fname, data)
+console.log("Data appended to file")`
   },
   4: {
     a: `// Node.js MongoDB Insert Employee
