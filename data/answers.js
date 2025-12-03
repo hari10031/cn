@@ -1,1013 +1,854 @@
 export const answersData = {
-  1: {
-    a: [
-      {
-        title: 'UseStateDemo.js',
-        code: `import { useState } from "react"
+    'bfs': `// BFS - Breadth First Search
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
 
-function UseStateDemo() {
-  let [count, setCount] = useState(0);
-  const increase = () => setCount(++count)
-  const decrease = () => setCount(--count)
-  
-  return (
-    <div align='center'>
-      <button onClick={increase}>Increment</button>
-      &nbsp;&nbsp;&nbsp;
-      {count}&nbsp;&nbsp;&nbsp;
-      <button onClick={decrease}>Decrement</button>
-    </div>
-  )
+int queue[MAX], front = -1, rear = -1;
+int visited[MAX];
+
+void enqueue(int v) {
+    if (front == -1) front = 0;
+    queue[++rear] = v;
 }
 
-export default UseStateDemo`
-      },
-      {
-        title: 'App.js',
-        code: `import UseStateDemo from "./UseStateDemo";
-
-function App() {
-  return (
-    <div align="center">
-      <UseStateDemo/>
-    </div>
-  );
+int dequeue() {
+    return queue[front++];
 }
 
-export default App;`
-      }
-    ],
-    b: `// Node.js URL Module Demo
-const { URL } = require('url');
-const str = "https://user:abcd@www.example.com:4000/abc/xyz/sample.txt?value1=10&value2=20#demo"
-const myUrl = new URL(str);
-console.log("Hostname=" + myUrl.hostname);
-console.log("Portnumber=" + myUrl.port);
-console.log("Relative path=" + myUrl.pathname);
-console.log("Queryparams=" + myUrl.search);
-console.log("Hashed data=" + myUrl.hash);
-console.log("Username=" + myUrl.username);
-console.log("Password=" + myUrl.password);
-console.log("Protocol=" + myUrl.protocol);`
-  },
-  2: {
-    a: [
-      {
-        title: 'WithJsx.js',
-        code: `import React from "react";
-
-function WithJsx() {
-  return (
-    <div align="center">
-      <h1>This is H1 tag executed using JSX</h1>
-      <p>This is paragraph tag executed using JSX</p>
-    </div>
-  )
+int isEmpty() {
+    return front == -1 || front > rear;
 }
 
-export default WithJsx;`
-      },
-      {
-        title: 'WithoutJsx.js',
-        code: `import React from "react";
-
-function WithoutJsx() {
-  let k1 = React.createElement("h1", null, "This is H1 tag executed without JSX")
-  let k2 = React.createElement("p", null, "This is Paragraph tag executed without JSX")
-  let k3 = React.createElement("div", {"align":"center"}, k1, k2);
-  return k3;
-}
-
-export default WithoutJsx;`
-      },
-      {
-        title: 'App.js',
-        code: `import WithJsx from './WithJsx';
-import WithoutJsx from './WithoutJsx';
-
-function App() {
-  return (
-    <div align="center">
-      <h3>React JS Program to demonstrate JSX</h3><hr/>
-      <WithJsx/>
-      <WithoutJsx/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ],
-    b: `// MongoDB Connection and Fetch Data
-const mdb = require("mongodb")
-const prompt = require("prompt-sync")()
-const mclient = mdb.MongoClient
-const url = "mongodb://localhost:27017"
-
-async function connectDB() {
-  try {
-    const conn = await mclient.connect(url);
-    console.log("Mongodb connection success...")
-    const test = conn.db("test")
-    const std = test.collection("student")
-    let result = await std.find({}).toArray()
-    console.log(result);
-    console.log("Number of records fetched=" + result.length)
-    conn.close()
-  } catch(error) {
-    console.log("Error=" + error)
-  }
-}
-
-connectDB()`
-  },
-  3: {
-    a: [
-      {
-        title: 'Arithmetic.js',
-        code: `import { Component } from "react";
-
-class Arithmetic extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {a:0, b:0, c:""}
-  }
-  
-  changeA = (event) => {this.setState({a:event.target.value})}
-  changeB = (event) => {this.setState({b:event.target.value})}
-  
-  add = () => {
-    let x = parseInt(this.state.a);
-    let y = parseInt(this.state.b);
-    this.setState({c:(x+y)})
-  }
-  
-  sub = () => {
-    let x = parseInt(this.state.a);
-    let y = parseInt(this.state.b);
-    this.setState({c:(x-y)})
-  }
-  
-  mul = () => {
-    let x = parseInt(this.state.a);
-    let y = parseInt(this.state.b);
-    this.setState({c:(x*y)})
-  }
-  
-  div = () => {
-    let x = parseInt(this.state.a);
-    let y = parseInt(this.state.b);
-    this.setState({c:(x/y)})
-  }
-  
-  render() {
-    return (
-      <div>
-        <h4>Arithmetic Operations using React Events</h4><hr/>
-        Enter first number:
-        <input type="text" value={this.state.a} onChange={this.changeA}/>
-        <br/>
-        Enter second number:
-        <input type="text" value={this.state.b} onChange={this.changeB}/>
-        <br/>
-        <button onClick={this.add}>Add</button>&nbsp;&nbsp;
-        <button onClick={this.sub}>Subtract</button>&nbsp;&nbsp;
-        <button onClick={this.mul}>Multiply</button>&nbsp;&nbsp;
-        <button onClick={this.div}>Divide</button><br/>
-        Result={this.state.c}
-      </div>
-    );
-  }
-}
-
-export default Arithmetic;`
-      },
-      {
-        title: 'App.js',
-        code: `import './App.css';
-import Arithmetic from './Arithmetic';
-
-function App() {
-  return (
-    <div className="App">
-      <Arithmetic/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ],
-    b: `// Node.js Append to File
-const file = require("fs")
-const prompt = require("prompt-sync")()
-let fname = prompt("Enter file name to open:")
-let data = prompt("Enter some text:")
-file.appendFileSync(fname, data)
-console.log("Data appended to file")`
-  },
-  4: {
-    a: `// MongoDB Insert Many Records
-const mdb = require("mongodb")
-const prompt = require("prompt-sync")()
-const mclient = mdb.MongoClient
-const url = "mongodb://localhost:27017"
-
-async function connectDB() {
-  try {
-    const conn = await mclient.connect(url);
-    console.log("Mongodb connection success...")
-    let n = prompt("How many records you want to insert?")
-    n = parseInt(n)
-    const test = conn.db("test")
-    const std = test.collection("student")
-    let query = []
-    for(let i=0; i<n; i++) {
-      console.log(\`Enter details of \${i} record:\\n=====\\n \`)
-      let id = parseInt(prompt("enter id:"));
-      let name = prompt("enter name:");
-      let marks = parseInt(prompt("enter marks:"))
-      let branch = prompt("enter branch:")
-      let city = prompt("enter city:")
-      let record = {
-        "_id":id, "name":name, "marks":marks, "branch":branch, "city":city
-      }
-      query.push(record)
+void bfs(int graph[][MAX], int n, int start) {
+    visited[start] = 1;
+    enqueue(start);
+    
+    printf("BFS Traversal: ");
+    while (!isEmpty()) {
+        int v = dequeue();
+        printf("%d ", v);
+        
+        for (int i = 0; i < n; i++) {
+            if (graph[v][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                enqueue(i);
+            }
+        }
     }
-    await std.insertMany(query);
-    console.log(n + " records inserted")
-    conn.close();
-  } catch (error) {
-    console.log("Error=" + error)
-  }
 }
 
-connectDB()`,
-    b: [
-      {
-        title: 'Empprops.js',
-        code: `function Empprops(props) {
-  return (
-    <div>
-      <h3>Employee details using props are:</h3>
-      <hr/>
-      <p>Name:{props.name}<br/>
-      Eid:{props.eid}<br/>
-      Salary:{props.salary}
-      </p>
-    </div>
-  );
-}
-
-export default Empprops;`
-      },
-      {
-        title: 'Studentcomp.js',
-        code: `import { Component } from "react";
-
-class Studentcomp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {rno:123, name:"smith", marks:70, branch:"CSE-DS"}
-  }
-  
-  change = () => {
-    this.setState({rno:345, name:"SMITH", marks:80, branch:"CSE-DS"})
-  }
-  
-  render() {
-    return (
-      <div>
-        <h3>Student Details using State</h3><hr/>
-        <p>Roll number:{this.state.rno}<br/>
-        Name:{this.state.name}<br/>
-        Branch:{this.state.branch}<br/>
-        Marks:{this.state.marks}<br/>
-        </p>
-        <button onClick={this.change}>Click to change</button>
-      </div>
-    );
-  }
-}
-
-export default Studentcomp;`
-      },
-      {
-        title: 'App.js',
-        code: `import './App.css';
-import Empprops from './propsdemo/Empprops';
-import Studentcomp from './propsdemo/Studentcomp';
-
-function App() {
-  return (
-    <div className="App">
-      <Empprops name="John" eid={123} salary={6000}/>
-      <Studentcomp/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ]
-  },
-  5: {
-    a: [
-      {
-        title: 'Sample.css',
-        code: `p {
-  color: blue;
-  border: 5px solid green;
-  background-color: bisque;
-  font-style: italic;
-  font-size: 40px;
-  margin-left: 400px;
-  margin-right: 400px;
-}`
-      },
-      {
-        title: 'Rules.module.css',
-        code: `.rule1 {
-  color: white;
-  background-color: darkmagenta;
-  border: 10px dotted yellow;
-  margin-left: 300px;
-  margin-right: 300px;
-  font-size: 40px;
-}`
-      },
-      {
-        title: 'StyleDemo.js',
-        code: `import "./Sample.css"
-import styles from "./Rules.module.css"
-
-function StyleDemo() {
-  return (
-    <div>
-      <h1 style={{color:"red", fontSize:"30px"}}>
-        This is H1 tag with Inline Style
-      </h1>
-      <p>This is paragraph with external style</p>
-      <h2 className={styles.rule1}>
-        This is H2 tag with external Module style
-      </h2>
-    </div>
-  );
-}
-
-export default StyleDemo;`
-      }
-    ],
-    b: `// MongoDB Student CRUD Operations (Shell)
-// 1. Create
-db.students.insertOne({ name: "Alice", grade: "A", age: 20 })
-
-// 2. Read
-db.students.find()
-db.students.findOne({ name: "Alice" })
-
-// 3. Update
-db.students.updateOne(
-  { name: "Alice" },
-  { $set: { grade: "A+" } }
-)
-
-// 4. Delete
-db.students.deleteOne({ name: "Alice" })`
-  },
-  6: {
-    a: [
-      {
-        title: 'Parent.js',
-        code: `import Child from "./Child"
-
-function Parent() {
-  return (<>
-    <h3>Parent Component</h3>
-    <Child/>
-  </>)
-}
-
-export default Parent;`
-      },
-      {
-        title: 'Child.js',
-        code: `import GrandChild from "./GrandChild"
-
-function Child() {
-  return (<>
-    <h3>Child component</h3>
-    <GrandChild/>
-  </>)
-}
-
-export default Child;`
-      },
-      {
-        title: 'GrandChild.js',
-        code: `import { UserNameContext } from "./App";
-import { useContext } from "react";
-
-function GrandChild() {
-  let data = useContext(UserNameContext);
-  return (<>
-    <h3>Grand Child component</h3>
-    <h3>Data Inherited from Main Application={data}</h3>
-  </>)
-}
-
-export default GrandChild;`
-      },
-      {
-        title: 'App.js',
-        code: `import Parent from "./Parent"
-import React from "react";
-
-export const UserNameContext = React.createContext();
-
-function App() {
-  return (
-    <div align="center">
-      <UserNameContext.Provider value={"MVSR"}>
-        <Parent/>
-      </UserNameContext.Provider>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ],
-    b: `// MongoDB Delete Many with Dynamic Search
-const mdb = require("mongodb")
-const prompt = require("prompt-sync")()
-const mclient = mdb.MongoClient
-const url = "mongodb://localhost:27017"
-
-async function connectDB() {
-  try {
-    const conn = await mclient.connect(url)
-    const test = conn.db("test")
-    const std = test.collection("student")
-    console.log("Mongodb connection success...")
-    let query1 = {}
-    let skey = prompt("Enter search key:")
-    let svalue = prompt("Enter search value:")
-    query1[skey] = svalue
-    await std.deleteMany(query1)
-    conn.close()
-    console.log("Record(s) Deleted")
-  } catch (error) {
-    console.log("Error=" + error)
-  }
-}
-
-connectDB()`
-  },
-  7: {
-    a: `// Node.js Create and Write File
-const file = require("fs")
-const prompt = require("prompt-sync")()
-let fname = prompt("Enter file name to create:")
-let data = prompt("Enter some text:")
-file.writeFileSync(fname, data)
-console.log("File created and data written to file")`,
-    b: [
-      {
-        title: 'Conditional.js',
-        code: `function Conditional(props) {
-  let k = props.value;
-  if (k)
-    return <h1>True Conditional tag executed</h1>
-  else
-    return <h1>False Conditional tag executed</h1>
-}
-
-export default Conditional;`
-      },
-      {
-        title: 'List.js',
-        code: `function List() {
-  let items = ["CSE", "CSIT", "DS", "IOTT", "AIML"]
-  let temp = []
-  for (let k=0; k<items.length; k++)
-    temp.push(<li>{items[k]}</li>)
-  return (<>
-    <h3>Displaying List using for loop</h3><br/>
-    <ol>{temp}</ol>
-    <hr/>
-    <h3>Displaying List using map function</h3><br/>
-    <ul>
-      {
-        items.map((value) => <li>{value}</li>)
-      }
-    </ul>
-  </>)
-}
-
-export default List;`
-      },
-      {
-        title: 'App.js',
-        code: `import Conditional from "./Conditional";
-import List from "./List";
-
-function App() {
-  return (
-    <div align="center">
-      <h3>React JS Program to demonstrate Conditional Rendering and List Rendering</h3><hr/>
-      <Conditional value={true}/>
-      <Conditional value={false}/>
-      <List/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ]
-  },
-  8: {
-    a: [
-      {
-        title: 'FunctionDemo.js',
-        code: `function FunctionDemo() {
-  return <h1>Function Component Executed</h1>
-}
-
-export default FunctionDemo;`
-      },
-      {
-        title: 'ClassComDemo.js',
-        code: `import { Component } from "react";
-
-class ClassComDemo extends Component {
-  render() {
-    return <h1>Class Component Executed</h1>
-  }
-}
-
-export default ClassComDemo;`
-      },
-      {
-        title: 'App.js',
-        code: `import './App.css';
-import FunctionDemo from './FunctionDemo';
-import ClassComDemo from './ClassComDemo';
-
-function App() {
-  return (
-    <div className="App">
-      <h1>ReactJS Application to demonstrate Components</h1>
-      <hr/>
-      <FunctionDemo/>
-      <ClassComDemo/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ],
-    b: `// MongoDB CRUD using Compass
-1. Open MongoDB Compass
-2. Connect to mongodb://localhost:27017
-3. Create Database: company
-4. Create Collection: employees
-5. Insert Document: Click "Add Data" > "Insert Document"
-   { "name": "John", "position": "Developer", "salary": 60000 }
-6. Find: Use filter { "position": "Developer" }
-7. Update: Click on document > Edit > Modify > Update
-8. Delete: Click on document > Delete`
-  },
-  9: {
-    a: `// Node.js HTTP Module Demo
-const http = require('http');
-
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write('<h1>Hello from Node.js HTTP Server!</h1>');
-  res.end();
-});
-
-server.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});`,
-    b: `// Express.js Load HTML Page
-const express = require('express');
-const path = require('path');
-const app = express();
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
-});
-
-// index.html
-<!DOCTYPE html>
-<html>
-<head><title>My Page</title></head>
-<body><h1>Welcome to Express!</h1></body>
-</html>`
-  },
-  10: {
-    a: `// React List Rendering Demo
-import React from 'react';
-
-function ListDemo() {
-  const items = ['Apple', 'Banana', 'Orange', 'Mango'];
-  const users = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' }
-  ];
-  
-  return (
-    <div>
-      <ul>
-        {items.map((item, index) => <li key={index}>{item}</li>)}
-      </ul>
-      <ul>
-        {users.map(user => <li key={user.id}>{user.name}</li>)}
-      </ul>
-    </div>
-  );
-}
-
-export default ListDemo;`,
-    b: `// Express.js with EJS Template Engine
-const express = require('express');
-const app = express();
-
-app.set('view engine', 'ejs');
-
-app.get('/', (req, res) => {
-  const data = { title: 'Home', users: ['Alice', 'Bob', 'Charlie'] };
-  res.render('index', data);
-});
-
-app.listen(3000);
-
-// views/index.ejs
-<!DOCTYPE html>
-<html>
-<head><title><%= title %></title></head>
-<body>
-  <h1><%= title %></h1>
-  <ul>
-    <% users.forEach(user => { %>
-      <li><%= user %></li>
-    <% }); %>
-  </ul>
-</body>
-</html>`
-  },
-  11: {
-    a: `// Express.js Arithmetic Form Handling
-const express = require('express');
-const app = express();
-
-app.use(express.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-  res.send(\`
-    <form method="POST" action="/calculate">
-      <input name="num1" type="number" placeholder="Number 1">
-      <select name="operation">
-        <option value="add">+</option>
-        <option value="subtract">-</option>
-        <option value="multiply">*</option>
-        <option value="divide">/</option>
-      </select>
-      <input name="num2" type="number" placeholder="Number 2">
-      <button type="submit">Calculate</button>
-    </form>
-  \`);
-});
-
-app.post('/calculate', (req, res) => {
-  const { num1, num2, operation } = req.body;
-  const n1 = parseFloat(num1), n2 = parseFloat(num2);
-  let result;
-  switch(operation) {
-    case 'add': result = n1 + n2; break;
-    case 'subtract': result = n1 - n2; break;
-    case 'multiply': result = n1 * n2; break;
-    case 'divide': result = n1 / n2; break;
-  }
-  res.send(\`Result: \${result}\`);
-});
-
-app.listen(3000);`,
-    b: `// Node.js prompt-sync Module
-const prompt = require('prompt-sync')();
-
-console.log('Welcome to the Calculator!');
-
-const name = prompt('Enter your name: ');
-console.log(\`Hello, \${name}!\`);
-
-const num1 = parseFloat(prompt('Enter first number: '));
-const num2 = parseFloat(prompt('Enter second number: '));
-
-const sum = num1 + num2;
-console.log(\`Sum: \${sum}\`);
-
-const choice = prompt('Do you want to continue? (yes/no): ');
-if (choice === 'yes') {
-  console.log('Continuing...');
-} else {
-  console.log('Goodbye!');
-}`
-  },
-  12: {
-    a: `// Node.js Read File
-const fs = require('fs');
-
-// Asynchronous read
-fs.readFile('input.txt', 'utf8', (err, data) => {
-  if (err) throw err;
-  console.log('File content:', data);
-});
-
-// Synchronous read
-const data = fs.readFileSync('input.txt', 'utf8');
-console.log(data);`,
-    b: `// Express.js Multiple Routes and Navigation
-const express = require('express');
-const app = express();
-
-app.get('/', (req, res) => {
-  res.send(\`
-    <h1>Home Page</h1>
-    <a href="/about">About</a> | 
-    <a href="/contact">Contact</a>
-  \`);
-});
-
-app.get('/about', (req, res) => {
-  res.send(\`
-    <h1>About Page</h1>
-    <a href="/">Home</a> | 
-    <a href="/contact">Contact</a>
-  \`);
-});
-
-app.get('/contact', (req, res) => {
-  res.send(\`
-    <h1>Contact Page</h1>
-    <a href="/">Home</a> | 
-    <a href="/about">About</a>
-  \`);
-});
-
-app.listen(3000, () => console.log('Server running'));`
-  },
-  13: {
-    a: `// Node.js Delete Employee from MongoDB
-const { MongoClient } = require('mongodb');
-
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-
-async function deleteEmployee() {
-  await client.connect();
-  const db = client.db('company');
-  const collection = db.collection('employees');
-  
-  // Delete one
-  const result1 = await collection.deleteOne({ name: "John" });
-  console.log('Deleted:', result1.deletedCount);
-  
-  // Delete many
-  const result2 = await collection.deleteMany({ salary: { $lt: 30000 } });
-  console.log('Deleted:', result2.deletedCount);
-  
-  await client.close();
-}
-
-deleteEmployee();`,
-    b: [
-      {
-        title: 'FunctionDemo.js',
-        code: `function FunctionDemo() {
-  return <h1>Function Component Executed</h1>
-}
-
-export default FunctionDemo;`
-      },
-      {
-        title: 'ClassComDemo.js',
-        code: `import { Component } from "react";
-
-class ClassComDemo extends Component {
-  render() {
-    return <h1>Class Component Executed</h1>
-  }
-}
-
-export default ClassComDemo;`
-      },
-      {
-        title: 'App.js',
-        code: `import './App.css';
-import FunctionDemo from './FunctionDemo';
-import ClassComDemo from './ClassComDemo';
-
-function App() {
-  return (
-    <div className="App">
-      <h1>ReactJS Application to demonstrate Components</h1>
-      <hr/>
-      <FunctionDemo/>
-      <ClassComDemo/>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ]
-  },
-  14: {
-    a: `// MongoDB CRUD Operations (Shell)
-// 1. Create Database and Collection
-use company
-db.createCollection("employees")
-
-// 2. Insert
-db.employees.insertOne({ name: "John", age: 30, position: "Developer" })
-db.employees.insertMany([
-  { name: "Alice", age: 25, position: "Designer" },
-  { name: "Bob", age: 35, position: "Manager" }
-])
-
-// 3. Read
-db.employees.find()
-db.employees.find({ position: "Developer" })
-db.employees.findOne({ name: "John" })
-
-// 4. Update
-db.employees.updateOne(
-  { name: "John" },
-  { $set: { age: 31 } }
-)
-db.employees.updateMany(
-  { position: "Developer" },
-  { $set: { department: "IT" } }
-)
-
-// 5. Delete
-db.employees.deleteOne({ name: "Bob" })
-db.employees.deleteMany({ age: { $lt: 30 } })`,
-    b: [
-      {
-        title: 'Sample.css',
-        code: `p {
-  color: blue;
-  border: 5px solid green;
-  background-color: bisque;
-  font-style: italic;
-  font-size: 40px;
-  margin-left: 400px;
-  margin-right: 400px;
-}`
-      },
-      {
-        title: 'Rules.module.css',
-        code: `.rule1 {
-  color: white;
-  background-color: darkmagenta;
-  border: 10px dotted yellow;
-  margin-left: 300px;
-  margin-right: 300px;
-  font-size: 40px;
-}`
-      },
-      {
-        title: 'StyleDemo.js',
-        code: `import "./Sample.css"
-import styles from "./Rules.module.css"
-
-function StyleDemo() {
-  return (
-    <div>
-      <h1 style={{color:"red", fontSize:"30px"}}>
-        This is H1 tag with Inline Style
-      </h1>
-      <p>This is paragraph with external style</p>
-      <h2 className={styles.rule1}>
-        This is H2 tag with external Module style
-      </h2>
-    </div>
-  );
-}
-
-export default StyleDemo;`
-      }
-    ]
-  },
-  15: {
-    a: [
-      {
-        title: 'Parent.js',
-        code: `import Child from "./Child"
-
-function Parent() {
-  return (<>
-    <h3>Parent Component</h3>
-    <Child/>
-  </>)
-}
-
-export default Parent;`
-      },
-      {
-        title: 'Child.js',
-        code: `import GrandChild from "./GrandChild"
-
-function Child() {
-  return (<>
-    <h3>Child component</h3>
-    <GrandChild/>
-  </>)
-}
-
-export default Child;`
-      },
-      {
-        title: 'GrandChild.js',
-        code: `import { UserNameContext } from "./App";
-import { useContext } from "react";
-
-function GrandChild() {
-  let data = useContext(UserNameContext);
-  return (<>
-    <h3>Grand Child component</h3>
-    <h3>Data Inherited from Main Application={data}</h3>
-  </>)
-}
-
-export default GrandChild;`
-      },
-      {
-        title: 'App.js',
-        code: `import Parent from "./Parent"
-import React from "react";
-
-export const UserNameContext = React.createContext();
-
-function App() {
-  return (
-    <div align="center">
-      <UserNameContext.Provider value={"MVSR"}>
-        <Parent/>
-      </UserNameContext.Provider>
-    </div>
-  );
-}
-
-export default App;`
-      }
-    ],
-    b: `// MongoDB Insert Many Records
-const mdb = require("mongodb")
-const prompt = require("prompt-sync")()
-const mclient = mdb.MongoClient
-const url = "mongodb://localhost:27017"
-
-async function connectDB() {
-  try {
-    const conn = await mclient.connect(url);
-    console.log("Mongodb connection success...")
-    let n = prompt("How many records you want to insert?")
-    n = parseInt(n)
-    const test = conn.db("test")
-    const std = test.collection("student")
-    let query = []
-    for(let i=0; i<n; i++) {
-      console.log(\`Enter details of \${i} record:\\n=====\\n \`)
-      let id = parseInt(prompt("enter id:"));
-      let name = prompt("enter name:");
-      let marks = parseInt(prompt("enter marks:"))
-      let branch = prompt("enter branch:")
-      let city = prompt("enter city:")
-      let record = {
-        "_id":id, "name":name, "marks":marks, "branch":branch, "city":city
-      }
-      query.push(record)
+int main() {
+    int n = 5;
+    int graph[MAX][MAX] = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 0, 1, 1},
+        {1, 0, 0, 0, 1},
+        {0, 1, 0, 0, 0},
+        {0, 1, 1, 0, 0}
+    };
+    
+    bfs(graph, n, 0);
+    return 0;
+}`,
+
+    'dfs': `// DFS - Depth First Search
+#include <stdio.h>
+#define MAX 100
+
+int visited[MAX];
+
+void dfs(int graph[][MAX], int n, int v) {
+    visited[v] = 1;
+    printf("%d ", v);
+    
+    for (int i = 0; i < n; i++) {
+        if (graph[v][i] == 1 && !visited[i]) {
+            dfs(graph, n, i);
+        }
     }
-    await std.insertMany(query);
-    console.log(n + " records inserted")
-    conn.close();
-  } catch (error) {
-    console.log("Error=" + error)
-  }
 }
 
-connectDB()`
-  }
+int main() {
+    int n = 5;
+    int graph[MAX][MAX] = {
+        {0, 1, 1, 0, 0},
+        {1, 0, 0, 1, 1},
+        {1, 0, 0, 0, 1},
+        {0, 1, 0, 0, 0},
+        {0, 1, 1, 0, 0}
+    };
+    
+    printf("DFS Traversal: ");
+    dfs(graph, n, 0);
+    return 0;
+}`,
+
+    'quicksort': `// Quick Sort
+#include <stdio.h>
+
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Original array: ");
+    printArray(arr, n);
+    
+    quickSort(arr, 0, n - 1);
+    
+    printf("Sorted array: ");
+    printArray(arr, n);
+    
+    return 0;
+}`,
+
+    'mergesort': `// Merge Sort
+#include <stdio.h>
+#include <stdlib.h>
+
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int L[n1], R[n2];
+    
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+    
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j])
+            arr[k++] = L[i++];
+        else
+            arr[k++] = R[j++];
+    }
+    
+    while (i < n1)
+        arr[k++] = L[i++];
+    while (j < n2)
+        arr[k++] = R[j++];
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Original: ");
+    printArray(arr, n);
+    
+    mergeSort(arr, 0, n - 1);
+    
+    printf("Sorted: ");
+    printArray(arr, n);
+    
+    return 0;
+}`,
+
+    'floyd': `// Floyd-Warshall Algorithm
+#include <stdio.h>
+#define V 4
+#define INF 99999
+
+void printSolution(int dist[][V]) {
+    printf("Shortest distances between every pair:\\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (dist[i][j] == INF)
+                printf("%7s", "INF");
+            else
+                printf("%7d", dist[i][j]);
+        }
+        printf("\\n");
+    }
+}
+
+void floydWarshall(int graph[][V]) {
+    int dist[V][V];
+    
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            dist[i][j] = graph[i][j];
+    
+    for (int k = 0; k < V; k++) {
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    }
+    
+    printSolution(dist);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 5, INF, 10},
+        {INF, 0, 3, INF},
+        {INF, INF, 0, 1},
+        {INF, INF, INF, 0}
+    };
+    
+    floydWarshall(graph);
+    return 0;
+}`,
+
+    'dijkstra': `// Dijkstra's Algorithm
+#include <stdio.h>
+#include <limits.h>
+#define V 6
+
+int minDistance(int dist[], int visited[]) {
+    int min = INT_MAX, min_index;
+    for (int v = 0; v < V; v++)
+        if (!visited[v] && dist[v] <= min)
+            min = dist[v], min_index = v;
+    return min_index;
+}
+
+void printSolution(int dist[]) {
+    printf("Vertex\\tDistance from Source\\n");
+    for (int i = 0; i < V; i++)
+        printf("%d\\t%d\\n", i, dist[i]);
+}
+
+void dijkstra(int graph[V][V], int src) {
+    int dist[V], visited[V] = {0};
+    
+    for (int i = 0; i < V; i++)
+        dist[i] = INT_MAX;
+    dist[src] = 0;
+    
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, visited);
+        visited[u] = 1;
+        
+        for (int v = 0; v < V; v++)
+            if (!visited[v] && graph[u][v] && 
+                dist[u] != INT_MAX && 
+                dist[u] + graph[u][v] < dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+    
+    printSolution(dist);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 4, 2, 0, 0, 0},
+        {4, 0, 1, 5, 0, 0},
+        {2, 1, 0, 8, 10, 0},
+        {0, 5, 8, 0, 2, 6},
+        {0, 0, 10, 2, 0, 3},
+        {0, 0, 0, 6, 3, 0}
+    };
+    
+    dijkstra(graph, 0);
+    return 0;
+}`,
+
+    'prims': `// Prim's Algorithm
+#include <stdio.h>
+#include <limits.h>
+#define V 5
+
+int minKey(int key[], int mstSet[]) {
+    int min = INT_MAX, min_index;
+    for (int v = 0; v < V; v++)
+        if (!mstSet[v] && key[v] < min)
+            min = key[v], min_index = v;
+    return min_index;
+}
+
+void printMST(int parent[], int graph[V][V]) {
+    printf("Edge\\tWeight\\n");
+    int total = 0;
+    for (int i = 1; i < V; i++) {
+        printf("%d - %d\\t%d\\n", parent[i], i, graph[i][parent[i]]);
+        total += graph[i][parent[i]];
+    }
+    printf("Total MST cost: %d\\n", total);
+}
+
+void primMST(int graph[V][V]) {
+    int parent[V], key[V], mstSet[V] = {0};
+    
+    for (int i = 0; i < V; i++)
+        key[i] = INT_MAX;
+    
+    key[0] = 0;
+    parent[0] = -1;
+    
+    for (int count = 0; count < V - 1; count++) {
+        int u = minKey(key, mstSet);
+        mstSet[u] = 1;
+        
+        for (int v = 0; v < V; v++)
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v])
+                parent[v] = u, key[v] = graph[u][v];
+    }
+    
+    printMST(parent, graph);
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 2, 0, 6, 0},
+        {2, 0, 3, 8, 5},
+        {0, 3, 0, 0, 7},
+        {6, 8, 0, 0, 9},
+        {0, 5, 7, 9, 0}
+    };
+    
+    primMST(graph);
+    return 0;
+}`,
+
+    'kruskals': `// Kruskal's Algorithm with Union-Find
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Edge {
+    int src, dest, weight;
+};
+
+int find(int parent[], int rank[], int i) {
+    if (parent[i] != i)
+        parent[i] = find(parent, rank, parent[i]);
+    return parent[i];
+}
+
+void Union(int parent[], int rank[], int x, int y) {
+    int xroot = find(parent, rank, x);
+    int yroot = find(parent, rank, y);
+    
+    if (rank[xroot] < rank[yroot])
+        parent[xroot] = yroot;
+    else if (rank[xroot] > rank[yroot])
+        parent[yroot] = xroot;
+    else {
+        parent[yroot] = xroot;
+        rank[xroot]++;
+    }
+}
+
+int compare(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+void KruskalMST(struct Edge edges[], int V, int E) {
+    qsort(edges, E, sizeof(edges[0]), compare);
+    
+    int parent[V], rank[V];
+    for (int v = 0; v < V; v++) {
+        parent[v] = v;
+        rank[v] = 0;
+    }
+    
+    printf("Building MST:\\n");
+    int mstCost = 0, edgeCount = 0;
+    
+    for (int i = 0; i < E && edgeCount < V - 1; i++) {
+        int x = find(parent, rank, edges[i].src);
+        int y = find(parent, rank, edges[i].dest);
+        
+        if (x != y) {
+            printf("Add edge: %d - %d (weight: %d)\\n", 
+                   edges[i].src, edges[i].dest, edges[i].weight);
+            mstCost += edges[i].weight;
+            edgeCount++;
+            Union(parent, rank, x, y);
+        }
+    }
+    printf("Total MST cost: %d\\n", mstCost);
+}
+
+int main() {
+    int V = 4, E = 5;
+    struct Edge edges[] = {
+        {0, 1, 10}, {0, 2, 6}, {0, 3, 5}, {1, 3, 15}, {2, 3, 4}
+    };
+    
+    KruskalMST(edges, V, E);
+    return 0;
+}`,
+
+    'knapsack-brute': `// 0/1 Knapsack - Brute Force
+#include <stdio.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int knapsackBrute(int W, int wt[], int val[], int n) {
+    if (n == 0 || W == 0)
+        return 0;
+    
+    if (wt[n-1] > W)
+        return knapsackBrute(W, wt, val, n-1);
+    
+    else
+        return max(
+            val[n-1] + knapsackBrute(W - wt[n-1], wt, val, n-1),
+            knapsackBrute(W, wt, val, n-1)
+        );
+}
+
+int main() {
+    int val[] = {60, 100, 120};
+    int wt[] = {10, 20, 30};
+    int W = 50;
+    int n = sizeof(val) / sizeof(val[0]);
+    
+    printf("Maximum value: %d\\n", knapsackBrute(W, wt, val, n));
+    return 0;
+}`,
+
+    'knapsack-greedy': `// Fractional Knapsack - Greedy
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Item {
+    int id, value, weight;
+    double ratio;
+};
+
+int compare(const void* a, const void* b) {
+    double r1 = ((struct Item*)a)->ratio;
+    double r2 = ((struct Item*)b)->ratio;
+    return (r2 > r1) - (r2 < r1);
+}
+
+double fractionalKnapsack(int W, struct Item items[], int n) {
+    for (int i = 0; i < n; i++)
+        items[i].ratio = (double)items[i].value / items[i].weight;
+    
+    qsort(items, n, sizeof(items[0]), compare);
+    
+    printf("Filling knapsack (capacity=%d):\\n", W);
+    double totalValue = 0.0;
+    int remainingCapacity = W;
+    
+    for (int i = 0; i < n; i++) {
+        if (remainingCapacity >= items[i].weight) {
+            remainingCapacity -= items[i].weight;
+            totalValue += items[i].value;
+            printf("Item %d: Take 100%%, value=+%d\\n", 
+                   items[i].id, items[i].value);
+        } else {
+            double fraction = (double)remainingCapacity / items[i].weight;
+            totalValue += items[i].value * fraction;
+            printf("Item %d: Take %.1f%%, value=+%.2f\\n", 
+                   items[i].id, fraction * 100, items[i].value * fraction);
+            break;
+        }
+    }
+    
+    return totalValue;
+}
+
+int main() {
+    int W = 50;
+    struct Item items[] = {
+        {1, 60, 10}, {2, 100, 20}, {3, 120, 30}
+    };
+    int n = sizeof(items) / sizeof(items[0]);
+    
+    double maxVal = fractionalKnapsack(W, items, n);
+    printf("\\nMaximum value: %.2f\\n", maxVal);
+    return 0;
+}`,
+
+    'knapsack-dp': `// 0/1 Knapsack - Dynamic Programming
+#include <stdio.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int knapsackDP(int W, int wt[], int val[], int n) {
+    int dp[n+1][W+1];
+    
+    for (int i = 0; i <= n; i++) {
+        for (int w = 0; w <= W; w++) {
+            if (i == 0 || w == 0)
+                dp[i][w] = 0;
+            else if (wt[i-1] <= w)
+                dp[i][w] = max(val[i-1] + dp[i-1][w-wt[i-1]], dp[i-1][w]);
+            else
+                dp[i][w] = dp[i-1][w];
+        }
+    }
+    
+    printf("DP Table:\\n");
+    for (int i = 0; i <= n; i++) {
+        for (int w = 0; w <= W; w++)
+            printf("%3d ", dp[i][w]);
+        printf("\\n");
+    }
+    
+    return dp[n][W];
+}
+
+int main() {
+    int val[] = {60, 100, 120};
+    int wt[] = {10, 20, 30};
+    int W = 50;
+    int n = sizeof(val) / sizeof(val[0]);
+    
+    printf("Maximum value: %d\\n", knapsackDP(W, wt, val, n));
+    return 0;
+}`,
+
+    'tsp': `// TSP - Dynamic Programming
+#include <stdio.h>
+#include <limits.h>
+#define N 4
+
+int dist[N][N] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+int visited_all = (1 << N) - 1;
+
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+int tsp(int mask, int pos, int dp[][N]) {
+    if (mask == visited_all)
+        return dist[pos][0];
+    
+    if (dp[mask][pos] != -1)
+        return dp[mask][pos];
+    
+    int ans = INT_MAX;
+    
+    for (int city = 0; city < N; city++) {
+        if ((mask & (1 << city)) == 0) {
+            int newAns = dist[pos][city] + tsp(mask | (1 << city), city, dp);
+            ans = min(ans, newAns);
+        }
+    }
+    
+    return dp[mask][pos] = ans;
+}
+
+int main() {
+    int dp[1 << N][N];
+    for (int i = 0; i < (1 << N); i++)
+        for (int j = 0; j < N; j++)
+            dp[i][j] = -1;
+    
+    printf("Minimum cost: %d\\n", tsp(1, 0, dp));
+    return 0;
+}`,
+
+    'nqueens': `// N-Queens Problem
+#include <stdio.h>
+#include <stdbool.h>
+#define N 8
+
+void printSolution(int board[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            printf("%c ", board[i][j] ? 'Q' : '.');
+        printf("\\n");
+    }
+    printf("\\n");
+}
+
+bool isSafe(int board[N][N], int row, int col) {
+    for (int i = 0; i < col; i++)
+        if (board[row][i])
+            return false;
+    
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j])
+            return false;
+    
+    for (int i = row, j = col; j >= 0 && i < N; i++, j--)
+        if (board[i][j])
+            return false;
+    
+    return true;
+}
+
+bool solveNQueens(int board[N][N], int col) {
+    if (col >= N)
+        return true;
+    
+    for (int i = 0; i < N; i++) {
+        if (isSafe(board, i, col)) {
+            board[i][col] = 1;
+            
+            if (solveNQueens(board, col + 1))
+                return true;
+            
+            board[i][col] = 0;
+        }
+    }
+    
+    return false;
+}
+
+int main() {
+    int board[N][N] = {0};
+    
+    if (solveNQueens(board, 0)) {
+        printf("Solution for %d-Queens:\\n", N);
+        printSolution(board);
+    } else {
+        printf("No solution exists\\n");
+    }
+    
+    return 0;
+}`,
+
+    'hamiltonian': `// Hamiltonian Cycle Detection
+#include <stdio.h>
+#include <stdbool.h>
+#define V 5
+
+void printCycle(int path[]) {
+    printf("Hamiltonian Cycle: ");
+    for (int i = 0; i < V; i++)
+        printf("%d ", path[i]);
+    printf("%d\\n", path[0]);
+}
+
+bool isSafe(int v, int graph[V][V], int path[], int pos) {
+    if (graph[path[pos - 1]][v] == 0)
+        return false;
+    
+    for (int i = 0; i < pos; i++)
+        if (path[i] == v)
+            return false;
+    
+    return true;
+}
+
+bool hamiltonianCycle(int graph[V][V], int path[], int pos) {
+    if (pos == V) {
+        if (graph[path[pos - 1]][path[0]] == 1) {
+            printCycle(path);
+            return true;
+        }
+        return false;
+    }
+    
+    for (int v = 1; v < V; v++) {
+        if (isSafe(v, graph, path, pos)) {
+            path[pos] = v;
+            
+            if (hamiltonianCycle(graph, path, pos + 1))
+                return true;
+            
+            path[pos] = -1;
+        }
+    }
+    
+    return false;
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 1, 0, 1, 0},
+        {1, 0, 1, 1, 1},
+        {0, 1, 0, 0, 1},
+        {1, 1, 0, 0, 1},
+        {0, 1, 1, 1, 0}
+    };
+    
+    int path[V];
+    for (int i = 0; i < V; i++)
+        path[i] = -1;
+    
+    path[0] = 0;
+    
+    if (!hamiltonianCycle(graph, path, 1))
+        printf("No Hamiltonian Cycle exists\\n");
+    
+    return 0;
+}`,
+
+    'graph-coloring': `// Graph Coloring - Backtracking
+#include <stdio.h>
+#include <stdbool.h>
+#define V 5
+
+void printSolution(int color[]) {
+    printf("Vertex colors:\\n");
+    for (int i = 0; i < V; i++)
+        printf("Vertex %d -> Color %d\\n", i, color[i]);
+}
+
+bool isSafe(int v, int graph[V][V], int color[], int c) {
+    for (int i = 0; i < V; i++)
+        if (graph[v][i] && c == color[i])
+            return false;
+    return true;
+}
+
+bool graphColoring(int graph[V][V], int m, int color[], int v) {
+    if (v == V)
+        return true;
+    
+    for (int c = 1; c <= m; c++) {
+        if (isSafe(v, graph, color, c)) {
+            color[v] = c;
+            
+            if (graphColoring(graph, m, color, v + 1))
+                return true;
+            
+            color[v] = 0;
+        }
+    }
+    
+    return false;
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 1, 1, 1, 0},
+        {1, 0, 1, 0, 0},
+        {1, 1, 0, 1, 1},
+        {1, 0, 1, 0, 1},
+        {0, 0, 1, 1, 0}
+    };
+    
+    int m = 3; // Number of colors
+    int color[V] = {0};
+    
+    if (graphColoring(graph, m, color, 0)) {
+        printf("Solution exists with %d colors:\\n", m);
+        printSolution(color);
+    } else {
+        printf("No solution exists with %d colors\\n", m);
+    }
+    
+    return 0;
+}`,
+
+    'binary-search': `// Binary Search
+#include <stdio.h>
+
+int binarySearch(int arr[], int l, int r, int x) {
+    while (l <= r) {
+        int mid = l + (r - l) / 2;
+        
+        printf("Searching in range [%d, %d], mid=%d, arr[mid]=%d\\n", 
+               l, r, mid, arr[mid]);
+        
+        if (arr[mid] == x) {
+            printf("Element found at index %d\\n", mid);
+            return mid;
+        }
+        
+        if (arr[mid] < x) {
+            printf("Search right half\\n");
+            l = mid + 1;
+        } else {
+            printf("Search left half\\n");
+            r = mid - 1;
+        }
+    }
+    
+    return -1;
+}
+
+int binarySearchRecursive(int arr[], int l, int r, int x, int depth) {
+    if (r >= l) {
+        int mid = l + (r - l) / 2;
+        
+        for (int i = 0; i < depth; i++) printf("  ");
+        printf("Range [%d,%d], mid=%d, value=%d\\n", l, r, mid, arr[mid]);
+        
+        if (arr[mid] == x)
+            return mid;
+        
+        if (arr[mid] > x)
+            return binarySearchRecursive(arr, l, mid - 1, x, depth + 1);
+        
+        return binarySearchRecursive(arr, mid + 1, r, x, depth + 1);
+    }
+    
+    return -1;
+}
+
+int main() {
+    int arr[] = {2, 3, 4, 10, 40, 50, 60, 70, 80, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 40;
+    
+    printf("Array: ");
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\\nSearching for: %d\\n\\n", x);
+    
+    printf("Iterative Binary Search:\\n");
+    int result = binarySearch(arr, 0, n - 1, x);
+    
+    printf("\\n\\nRecursive Binary Search:\\n");
+    result = binarySearchRecursive(arr, 0, n - 1, x, 0);
+    if (result == -1)
+        printf("Element not found\\n");
+    else
+        printf("Element found at index %d\\n", result);
+    
+    return 0;
+}`
 };
