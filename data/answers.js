@@ -1,5 +1,6 @@
 export const answersData = {
-    'bfs': `// BFS - Breadth First Search
+    'bfs': `//bfs
+
 #include <stdio.h>
 #include <stdlib.h>
 #define MAX 100
@@ -84,703 +85,620 @@ int main() {
     return 0;
 }`,
 
-    'quicksort': `// Quick Sort
-#include <stdio.h>
+    'quicksort': `//quick sort
+#include<stdio.h>
+int arr[10]={99,98,97,96,95,94,93,92,91,90};
 
-void swap(int* a, int* b) {
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
-
-int partition(int arr[], int low, int high) {
-    int pivot = arr[high];
-    int i = low - 1;
-    
-    for (int j = low; j < high; j++) {
-        if (arr[j] < pivot) {
+int Parition(int l,int r){
+    int pivot = arr[l];
+    int i =l;
+    int j= r;
+    while (i < j) {
+        while (i <= r && arr[i] <= pivot)
             i++;
-            swap(&arr[i], &arr[j]);
+
+        while (j >= l && arr[j] > pivot)
+            j--;
+
+        if (i < j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
         }
     }
-    swap(&arr[i + 1], &arr[high]);
-    return i + 1;
+
+    int temp = arr[l];
+    arr[l] = arr[j];
+    arr[j] = temp;
+
+    return j;
+
+
 }
 
-void quickSort(int arr[], int low, int high) {
-    if (low < high) {
-        int pi = partition(arr, low, high);
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
+void quick(int l,int r){
+    if(l<r){
+        int pi = Parition(l,r);
+        quick(l,pi-1);
+        quick(pi+1,r);
     }
+    
 }
 
-void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\\n");
-}
 
-int main() {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90};
-    int n = sizeof(arr) / sizeof(arr[0]);
+
+void main(){
     
-    printf("Original array: ");
-    printArray(arr, n);
-    
-    quickSort(arr, 0, n - 1);
-    
-    printf("Sorted array: ");
-    printArray(arr, n);
-    
-    return 0;
+    quick(0,9);
+    for(int i=0;i<10;i++){
+        printf("%d ",arr[i]);
+    }
 }`,
 
-    'mergesort': `// Merge Sort
-#include <stdio.h>
-#include <stdlib.h>
+    'mergesort': `// merge sort
 
-void merge(int arr[], int l, int m, int r) {
-    int n1 = m - l + 1;
-    int n2 = r - m;
-    int L[n1], R[n2];
-    
-    for (int i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-    
-    int i = 0, j = 0, k = l;
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j])
-            arr[k++] = L[i++];
-        else
-            arr[k++] = R[j++];
+#include<stdio.h>
+int arr[10]={99,98,97,96,95,94,93,92,91,90};
+
+void merge(int l,int mid,int r){
+    int temp[10];
+    int i = l;
+    int j = mid+1;
+    int m = 0;
+    while(i<=mid && j<=r){
+        if(arr[i]<arr[j]){
+            temp[m]=arr[i];
+            i++;
+        }
+        else{
+            temp[m]=arr[j];
+            j++;
+        }
+        m++;
+    }
+    while(i<=mid){
+        temp[m]=arr[i];
+        i++;
+        m++;
+    }
+    while(j<=r){
+        temp[m]=arr[j];
+        j++;
+        m++;
+    }
+    for(int i=l;i<=r;i++){
+        arr[i]=temp[i-l];
     }
     
-    while (i < n1)
-        arr[k++] = L[i++];
-    while (j < n2)
-        arr[k++] = R[j++];
 }
 
-void mergeSort(int arr[], int l, int r) {
-    if (l < r) {
-        int m = l + (r - l) / 2;
-        mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
-        merge(arr, l, m, r);
+void mergeSort(int l,int r){
+    if(l<r){
+        int mid=(l+r)/2;
+        mergeSort(l,mid);
+        mergeSort(mid+1,r);
+        merge(l,mid,r);
     }
+    
 }
 
-void printArray(int arr[], int n) {
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\\n");
-}
-
-int main() {
-    int arr[] = {64, 34, 25, 12, 22, 11, 90};
-    int n = sizeof(arr) / sizeof(arr[0]);
+void main(){
     
-    printf("Original: ");
-    printArray(arr, n);
-    
-    mergeSort(arr, 0, n - 1);
-    
-    printf("Sorted: ");
-    printArray(arr, n);
-    
-    return 0;
+    mergeSort(0,9);
+    for(int i=0;i<10;i++){
+        printf("%d ",arr[i]);
+    }
 }`,
 
-    'floyd': `// Floyd-Warshall Algorithm
-#include <stdio.h>
-#define V 4
+    'floyd': `//floyd warshal
+
+#include<stdio.h>
+
+#define N 4
 #define INF 99999
+int main(){
+    int dist[N][N]={{0,3,INF,7},{8,0,2,INF},{5,INF,0,1},{2,INF,INF,0}};
 
-void printSolution(int dist[][V]) {
-    printf("Shortest distances between every pair:\\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            if (dist[i][j] == INF)
-                printf("%7s", "INF");
-            else
-                printf("%7d", dist[i][j]);
-        }
-        printf("\\n");
-    }
-}
-
-void floydWarshall(int graph[][V]) {
-    int dist[V][V];
-    
-    for (int i = 0; i < V; i++)
-        for (int j = 0; j < V; j++)
-            dist[i][j] = graph[i][j];
-    
-    for (int k = 0; k < V; k++) {
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (dist[i][k] + dist[k][j] < dist[i][j])
+    for(int k=0;k<N;k++){
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                if(dist[i][k] + dist[k][j] <dist[i][j] && dist[i][k] != INF && dist[k][j] != INF){
                     dist[i][j] = dist[i][k] + dist[k][j];
+
+                }
             }
         }
     }
-    
-    printSolution(dist);
-}
+    for(int i=0;i<N;i++){
+        for(int j=0;j<N;j++){
+            printf("%d ",dist[i][j]);
+        }
+        printf("\\n");
+    }
 
-int main() {
-    int graph[V][V] = {
-        {0, 5, INF, 10},
-        {INF, 0, 3, INF},
-        {INF, INF, 0, 1},
-        {INF, INF, INF, 0}
-    };
-    
-    floydWarshall(graph);
-    return 0;
+
 }`,
 
-    'dijkstra': `// Dijkstra's Algorithm
-#include <stdio.h>
-#include <limits.h>
+    'dijkstra': `//dijkstra algo
+
+#include<stdio.h>
 #define V 6
-
-int minDistance(int dist[], int visited[]) {
-    int min = INT_MAX, min_index;
-    for (int v = 0; v < V; v++)
-        if (!visited[v] && dist[v] <= min)
-            min = dist[v], min_index = v;
-    return min_index;
-}
-
-void printSolution(int dist[]) {
-    printf("Vertex\\tDistance from Source\\n");
-    for (int i = 0; i < V; i++)
-        printf("%d\\t%d\\n", i, dist[i]);
-}
-
-void dijkstra(int graph[V][V], int src) {
-    int dist[V], visited[V] = {0};
-    
-    for (int i = 0; i < V; i++)
-        dist[i] = INT_MAX;
-    dist[src] = 0;
-    
-    for (int count = 0; count < V - 1; count++) {
-        int u = minDistance(dist, visited);
-        visited[u] = 1;
-        
-        for (int v = 0; v < V; v++)
-            if (!visited[v] && graph[u][v] && 
-                dist[u] != INT_MAX && 
-                dist[u] + graph[u][v] < dist[v])
-                dist[v] = dist[u] + graph[u][v];
-    }
-    
-    printSolution(dist);
-}
-
-int main() {
-    int graph[V][V] = {
-        {0, 4, 2, 0, 0, 0},
-        {4, 0, 1, 5, 0, 0},
-        {2, 1, 0, 8, 10, 0},
-        {0, 5, 8, 0, 2, 6},
-        {0, 0, 10, 2, 0, 3},
-        {0, 0, 0, 6, 3, 0}
+int graph[V][V] = {
+        {0, 4, 0, 0, 0, 0},
+        {4, 0, 8, 0, 0, 0},
+        {0, 8, 0, 7, 0, 4},
+        {0, 0, 7, 0, 9, 14},
+        {0, 0, 0, 9, 0, 10},
+        {0, 0, 4, 14, 10, 0}
     };
-    
-    dijkstra(graph, 0);
-    return 0;
-}`,
+#define INF 99999
 
-    'prims': `// Prim's Algorithm
-#include <stdio.h>
-#include <limits.h>
-#define V 5
-
-int minKey(int key[], int mstSet[]) {
-    int min = INT_MAX, min_index;
-    for (int v = 0; v < V; v++)
-        if (!mstSet[v] && key[v] < min)
-            min = key[v], min_index = v;
-    return min_index;
-}
-
-void printMST(int parent[], int graph[V][V]) {
-    printf("Edge\\tWeight\\n");
-    int total = 0;
-    for (int i = 1; i < V; i++) {
-        printf("%d - %d\\t%d\\n", parent[i], i, graph[i][parent[i]]);
-        total += graph[i][parent[i]];
-    }
-    printf("Total MST cost: %d\\n", total);
-}
-
-void primMST(int graph[V][V]) {
-    int parent[V], key[V], mstSet[V] = {0};
-    
-    for (int i = 0; i < V; i++)
-        key[i] = INT_MAX;
-    
-    key[0] = 0;
-    parent[0] = -1;
-    
-    for (int count = 0; count < V - 1; count++) {
-        int u = minKey(key, mstSet);
-        mstSet[u] = 1;
-        
-        for (int v = 0; v < V; v++)
-            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v])
-                parent[v] = u, key[v] = graph[u][v];
-    }
-    
-    printMST(parent, graph);
-}
-
-int main() {
-    int graph[V][V] = {
-        {0, 2, 0, 6, 0},
-        {2, 0, 3, 8, 5},
-        {0, 3, 0, 0, 7},
-        {6, 8, 0, 0, 9},
-        {0, 5, 7, 9, 0}
-    };
-    
-    primMST(graph);
-    return 0;
-}`,
-
-    'kruskals': `// Kruskal's Algorithm with Union-Find
-#include <stdio.h>
-#include <stdlib.h>
-
-struct Edge {
-    int src, dest, weight;
-};
-
-int find(int parent[], int rank[], int i) {
-    if (parent[i] != i)
-        parent[i] = find(parent, rank, parent[i]);
-    return parent[i];
-}
-
-void Union(int parent[], int rank[], int x, int y) {
-    int xroot = find(parent, rank, x);
-    int yroot = find(parent, rank, y);
-    
-    if (rank[xroot] < rank[yroot])
-        parent[xroot] = yroot;
-    else if (rank[xroot] > rank[yroot])
-        parent[yroot] = xroot;
-    else {
-        parent[yroot] = xroot;
-        rank[xroot]++;
-    }
-}
-
-int compare(const void* a, const void* b) {
-    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
-}
-
-void KruskalMST(struct Edge edges[], int V, int E) {
-    qsort(edges, E, sizeof(edges[0]), compare);
-    
-    int parent[V], rank[V];
-    for (int v = 0; v < V; v++) {
-        parent[v] = v;
-        rank[v] = 0;
-    }
-    
-    printf("Building MST:\\n");
-    int mstCost = 0, edgeCount = 0;
-    
-    for (int i = 0; i < E && edgeCount < V - 1; i++) {
-        int x = find(parent, rank, edges[i].src);
-        int y = find(parent, rank, edges[i].dest);
-        
-        if (x != y) {
-            printf("Add edge: %d - %d (weight: %d)\\n", 
-                   edges[i].src, edges[i].dest, edges[i].weight);
-            mstCost += edges[i].weight;
-            edgeCount++;
-            Union(parent, rank, x, y);
+int minDistance(int visited[],int dist[]){
+    int min= INF;
+    int idx = -1;
+    for(int i=0;i<V;i++){
+        if(!visited[i] && dist[i]<min){
+            min = dist[i];
+            idx = i;
         }
     }
-    printf("Total MST cost: %d\\n", mstCost);
+    return idx;
 }
 
-int main() {
-    int V = 4, E = 5;
-    struct Edge edges[] = {
-        {0, 1, 10}, {0, 2, 6}, {0, 3, 5}, {1, 3, 15}, {2, 3, 4}
-    };
-    
-    KruskalMST(edges, V, E);
-    return 0;
+
+void dijkstra(int start){
+    int dist[V];
+    int visited[V];
+    for(int i=0;i<V;i++){
+        dist[i] = INF;
+        visited[i] = 0;
+
+    }
+    dist[start] = 0;
+    for(int i =0;i<V-1;i++){
+        int u = minDistance(visited,dist);
+        visited[u]=1;
+        for(int v=0;v<V;v++){
+            if(!visited[v] && graph[u][v]!=0 && dist[u]!=INF && dist[u] + graph[u][v] < dist[v] ){
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+    printf("Vertex Distance from source vertex %d\\n",start);
+    for(int i=0;i<V;i++){
+        printf("%d ",dist[i]);
+    }
+
+}
+
+void main(){
+    dijkstra(0);
 }`,
 
-    'knapsack-brute': `// 0/1 Knapsack - Brute Force
+    'prims': `//prims
+
 #include <stdio.h>
+#include <limits.h>
 
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-int knapsackBrute(int W, int wt[], int val[], int n) {
-    if (n == 0 || W == 0)
-        return 0;
-    
-    if (wt[n-1] > W)
-        return knapsackBrute(W, wt, val, n-1);
-    
-    else
-        return max(
-            val[n-1] + knapsackBrute(W - wt[n-1], wt, val, n-1),
-            knapsackBrute(W, wt, val, n-1)
-        );
-}
+#define INF 999999
 
 int main() {
-    int val[] = {60, 100, 120};
-    int wt[] = {10, 20, 30};
-    int W = 50;
-    int n = sizeof(val) / sizeof(val[0]);
-    
-    printf("Maximum value: %d\\n", knapsackBrute(W, wt, val, n));
-    return 0;
-}`,
+    int n;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
 
-    'knapsack-greedy': `// Fractional Knapsack - Greedy
-#include <stdio.h>
-#include <stdlib.h>
+    int graph[20][20];
 
-struct Item {
-    int id, value, weight;
-    double ratio;
-};
-
-int compare(const void* a, const void* b) {
-    double r1 = ((struct Item*)a)->ratio;
-    double r2 = ((struct Item*)b)->ratio;
-    return (r2 > r1) - (r2 < r1);
-}
-
-double fractionalKnapsack(int W, struct Item items[], int n) {
-    for (int i = 0; i < n; i++)
-        items[i].ratio = (double)items[i].value / items[i].weight;
-    
-    qsort(items, n, sizeof(items[0]), compare);
-    
-    printf("Filling knapsack (capacity=%d):\\n", W);
-    double totalValue = 0.0;
-    int remainingCapacity = W;
-    
+    printf("Enter the adjacency matrix (use 0 for no edge):\\n");
     for (int i = 0; i < n; i++) {
-        if (remainingCapacity >= items[i].weight) {
-            remainingCapacity -= items[i].weight;
-            totalValue += items[i].value;
-            printf("Item %d: Take 100%%, value=+%d\\n", 
-                   items[i].id, items[i].value);
-        } else {
-            double fraction = (double)remainingCapacity / items[i].weight;
-            totalValue += items[i].value * fraction;
-            printf("Item %d: Take %.1f%%, value=+%.2f\\n", 
-                   items[i].id, fraction * 100, items[i].value * fraction);
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+            if (graph[i][j] == 0 && i != j)
+                graph[i][j] = INF;  // replace 0 with INF (except diagonal)
+        }
+    }
+    int start;
+    printf("Enter starting vertex (1 to %d): ",n);
+    scanf("%d",&start);
+    start--;
+    int selected[20]={0};
+    selected[start] = 1;
+    int edgecount = 0;
+    int mst =0;
+    while(edgecount<n-1){
+        int min = INF;
+        int u =-1,v=-1;
+        for(int i=0;i<n;i++){
+            if(selected[i]){
+                for(int j=0;j<n;j++){
+                    if(!selected[j] && graph[i][j] <min){
+                        min = graph[i][j];
+                        u = i;
+                        v = j;
+                    }
+                }
+
+            }
+
+        }
+        if(u !=-1 && v!=-1){
+            printf("%d -- %d cost = %d\\n",u+1,v+1,min);
+            selected[v] = 1;
+            mst +=min;
+            edgecount++;
+        }
+    }
+
+
+
+}`,
+
+    'kruskals': `#include <stdio.h>
+
+#define INF 999
+int parent[20];
+int find(int i){
+    while(parent[i] != i) i = parent[i];
+    return i;
+}
+
+void union1(int i,int j){
+    parent[i] = parent[j]; 
+}
+
+void main(){
+    int cost[20][20];
+    int n,i,j,min,u,v,a,b,ne=1,mincost=0;
+    printf("ENter number of vertices: ");
+    scanf("%d",&n);
+    printf("Enter the cost matrix:\\n");
+    for(i=1;i<=n;i++){
+        for(j=1;j<=n;j++){
+            scanf("%d",&cost[i][j]);
+            if(cost[i][j] == 0) cost[i][j] = INF;
+        }
+    }
+    for(i = 1;i<=n;i++) parent[i] = i;
+
+    printf("\\n Edges in the Minimum Spanning Tree:\\n");
+
+    while(ne<n){
+        min = INF;
+        for(i=1;i<=n;i++){
+            for(j=1;j<=n;j++){
+                if(cost[i][j]<min ){
+                    min = cost[i][j];
+                    u=i;
+                    v=j;
+                }
+            }
+        }
+        a = find(u);
+        b= find(v);
+        if(a!=b){
+            printf("%d -- %d cost = %d\\n",u,v,min);
+            union1(a,b);
+            mincost += min;
+            ne++;
+        }
+        cost[u][v] = cost[v][u] = INF;
+    }
+    printf("Minimum cost = %d\\n",mincost);
+}`,
+
+    'knapsack-brute': `// knapsack brute
+
+#include<stdio.h>
+#define N 4      
+#define W 7 
+
+int main(){
+    int weight[N] = {1, 3, 4, 5};
+    int value[N]  = {1, 4, 5, 7};
+    int maxValue = 0;
+    int bestMask = 0;
+    int toalSubsets = 1<<N;
+    for(int i =0;i<toalSubsets;i++){
+        int sumweight = 0;
+        int sumvalue = 0;
+        for(int j=0;j<N;j++){
+            if(i & (1<<j)){
+                sumweight += weight[j];
+                sumvalue += value[j];
+            }
+            
+        }
+        if(sumweight<= W && sumvalue > maxValue){
+            maxValue = sumvalue;
+            bestMask = i;
+        }
+    }
+    printf("Maximum value: %d\\n",maxValue);
+    for(int i =0;i<N;i++){
+        if(bestMask & (1<<i)){
+            printf("%d ",i);
+        }
+    }
+
+}`,
+
+    'knapsack-greedy': `//knapsack greedy
+#include<stdio.h>
+#define N 4      
+#define W 7 
+
+int main(){
+    int weight[N] = {1, 3, 4, 5};
+    int value[N]  = {1, 4, 5, 7};
+    double ratio[N];
+    for(int i=0;i<N;i++){
+        ratio[i] = (double)value[i]/weight[i];
+    }
+    for(int i=0;i<N;i++){
+        for(int j=i+1;j<N;j++){
+
+            if(ratio[i]<ratio[j]){
+                double temp = ratio[i];
+                ratio[i] = ratio[j];
+                ratio[j] = temp;
+                int temp2 = weight[i];
+                weight[i] = weight[j];
+                weight[j] = temp2;
+                int temp3 = value[i];
+                value[i] = value[j];
+                value[j] = temp3;
+            }
+        }
+    }
+    double totalvalue = 0;
+    int reaminig = W;
+    for(int i =0;i<N;i++){
+        if(weight[i]<=reaminig){
+            totalvalue += value[i];
+            reaminig -= weight[i];
+        }else{
+            totalvalue += ratio[i]*reaminig;
             break;
         }
     }
-    
-    return totalValue;
-}
-
-int main() {
-    int W = 50;
-    struct Item items[] = {
-        {1, 60, 10}, {2, 100, 20}, {3, 120, 30}
-    };
-    int n = sizeof(items) / sizeof(items[0]);
-    
-    double maxVal = fractionalKnapsack(W, items, n);
-    printf("\\nMaximum value: %.2f\\n", maxVal);
-    return 0;
+    printf("Maximum value in knapsack is %.2f",totalvalue);
 }`,
 
-    'knapsack-dp': `// 0/1 Knapsack - Dynamic Programming
-#include <stdio.h>
+    'knapsack-dp': `//knapsack dp
 
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-int knapsackDP(int W, int wt[], int val[], int n) {
-    int dp[n+1][W+1];
-    
-    for (int i = 0; i <= n; i++) {
-        for (int w = 0; w <= W; w++) {
-            if (i == 0 || w == 0)
-                dp[i][w] = 0;
-            else if (wt[i-1] <= w)
-                dp[i][w] = max(val[i-1] + dp[i-1][w-wt[i-1]], dp[i-1][w]);
-            else
-                dp[i][w] = dp[i-1][w];
-        }
-    }
-    
-    printf("DP Table:\\n");
-    for (int i = 0; i <= n; i++) {
-        for (int w = 0; w <= W; w++)
-            printf("%3d ", dp[i][w]);
-        printf("\\n");
-    }
-    
-    return dp[n][W];
-}
-
+#include<Stdio.h>
+#define N 4     
+#define W 7     
 int main() {
-    int val[] = {60, 100, 120};
-    int wt[] = {10, 20, 30};
-    int W = 50;
-    int n = sizeof(val) / sizeof(val[0]);
-    
-    printf("Maximum value: %d\\n", knapsackDP(W, wt, val, n));
-    return 0;
+    int weight[N] = {1, 3, 4, 5};
+    int value[N]  = {1, 4, 5, 7};
+    int dp[N+1][W+1];
+    for(int i =0;i<=N;i++){
+        for(int j =0;j<=W;j++){
+            if(i==0 || j== 0) {
+                dp[i][j] = 0;
+            }else if(weight[i-1]<=j){
+                int include = value[i-1]+dp[i-1][j-weight[i-1]];
+                int exclude = dp[i-1][j];
+                dp[i][j] = (include>exclude)?include:exclude;
+            }else{
+                dp[i][j] = dp[i-1][j];
+            }
+        }
+
+    }
+    printf("Maximum value = %d\\n", dp[N][W]);
+
+
 }`,
 
-    'tsp': `// TSP - Dynamic Programming
-#include <stdio.h>
-#include <limits.h>
-#define N 4
+    'tsp': `#include<stdio.h>
+#define INF 99999
+int n,cost[20][20],dp[n][1<< 15];
 
-int dist[N][N] = {
-    {0, 10, 15, 20},
-    {10, 0, 35, 25},
-    {15, 35, 0, 30},
-    {20, 25, 30, 0}
-};
-
-int visited_all = (1 << N) - 1;
-
-int min(int a, int b) {
-    return (a < b) ? a : b;
-}
-
-int tsp(int mask, int pos, int dp[][N]) {
-    if (mask == visited_all)
-        return dist[pos][0];
-    
-    if (dp[mask][pos] != -1)
-        return dp[mask][pos];
-    
-    int ans = INT_MAX;
-    
-    for (int city = 0; city < N; city++) {
-        if ((mask & (1 << city)) == 0) {
-            int newAns = dist[pos][city] + tsp(mask | (1 << city), city, dp);
-            ans = min(ans, newAns);
+int tsp(int pos,int mask){
+    if(mask == (1<<n) -1) return cost[pos][0];
+    if(dp[pos][mask] != -1) return dp[pos][mask];
+    int ans = INF;
+    for(int city = 0;city<n;city++){
+        if((mask &(1<<city)) == 0){
+            int newans = cost[pos][city] +tsp(city, mask | (1<<city));
+            if(newans < ans){
+                ans = newans;
+            }
         }
     }
-    
-    return dp[mask][pos] = ans;
+    dp[pos][mask] = ans;
+    return ans;
 }
 
-int main() {
-    int dp[1 << N][N];
-    for (int i = 0; i < (1 << N); i++)
-        for (int j = 0; j < N; j++)
+int main(){
+    int i,j;
+    printf("Enter the number of cities: ");
+    scanf("%d",&n);
+    printf("Enter the cost matrix: \\n");
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++){
+            scanf("%d",&cost[i][j]);
+            if(cost[i][j] == 0) cost[i][j] = INF;
+        }
+    }
+    for(i=0;i<n;i++){
+        for(j=0;j<(1<<n);j++){
             dp[i][j] = -1;
-    
-    printf("Minimum cost: %d\\n", tsp(1, 0, dp));
+        }
+    }
+    int ans = tsp(0,1);
+    printf("Minimum cost = %d\\n",ans);
     return 0;
 }`,
 
-    'nqueens': `// N-Queens Problem
-#include <stdio.h>
-#include <stdbool.h>
-#define N 8
+    'nqueens': `#include<stdio.h>
+int x[30],count = 0;
+#include<math.h>
 
-void printSolution(int board[N][N]) {
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++)
-            printf("%c ", board[i][j] ? 'Q' : '.');
+#include <stdlib.h>
+
+
+int place(int k,int n){
+    for(int i=1;i<k;i++){
+        if(x[i] == n || abs(x[i]-n) == abs(k-i) ){
+            return 0;
+        }
+    }
+    return 1;
+}
+void print_sol(int n){
+    int i,j;
+    count++;
+    printf("\\n\\nSolution%d:\\n",count);
+    for(i=1;i<=n;i++){
+        for(j=1;j<=n;j++){
+            if(x[i]==j) printf("Q\\t");
+            else printf("-\\t");
+        }
         printf("\\n");
     }
-    printf("\\n");
-}
 
-bool isSafe(int board[N][N], int row, int col) {
-    for (int i = 0; i < col; i++)
-        if (board[row][i])
-            return false;
-    
-    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
-        if (board[i][j])
-            return false;
-    
-    for (int i = row, j = col; j >= 0 && i < N; i++, j--)
-        if (board[i][j])
-            return false;
-    
-    return true;
 }
+void queen(int k,int n){
+    for(int i =1;i<=n;i++){
+        if(place(k,i)){
+            x[k] = i;
+            if(k==n) print_sol(n);
+            else queen(k+1,n);
 
-bool solveNQueens(int board[N][N], int col) {
-    if (col >= N)
-        return true;
-    
-    for (int i = 0; i < N; i++) {
-        if (isSafe(board, i, col)) {
-            board[i][col] = 1;
-            
-            if (solveNQueens(board, col + 1))
-                return true;
-            
-            board[i][col] = 0;
         }
     }
     
-    return false;
 }
 
-int main() {
-    int board[N][N] = {0};
-    
-    if (solveNQueens(board, 0)) {
-        printf("Solution for %d-Queens:\\n", N);
-        printSolution(board);
-    } else {
-        printf("No solution exists\\n");
-    }
-    
-    return 0;
+
+void main(){
+    int n=4;
+    // printf("Enter the number of queens: ");
+    // scanf("%d",&n);
+    queen(1,n);
+    printf("Total solutions = %d\\n",count);
 }`,
 
-    'hamiltonian': `// Hamiltonian Cycle Detection
-#include <stdio.h>
-#include <stdbool.h>
-#define V 5
+    'hamiltonian': `// hamiltonian cycle
 
-void printCycle(int path[]) {
-    printf("Hamiltonian Cycle: ");
-    for (int i = 0; i < V; i++)
-        printf("%d ", path[i]);
-    printf("%d\\n", path[0]);
-}
+#include<stdio.h>
+int n;
+int s;
+int x[10]={0};
+int count=0;
+int a[10][10];
 
-bool isSafe(int v, int graph[V][V], int path[], int pos) {
-    if (graph[path[pos - 1]][v] == 0)
-        return false;
-    
-    for (int i = 0; i < pos; i++)
-        if (path[i] == v)
-            return false;
-    
-    return true;
-}
-
-bool hamiltonianCycle(int graph[V][V], int path[], int pos) {
-    if (pos == V) {
-        if (graph[path[pos - 1]][path[0]] == 1) {
-            printCycle(path);
-            return true;
+void nextvalue(int k){
+    int j;
+    do{
+        x[k] = (x[k]+1)%(n+1);
+        
+        if(x[k]==0) return ;
+        if(a[x[k-1]][x[k]] != 0){
+            for(j=1;j<k;j++){
+                if(x[j] == x[k]) break;
+            }
+            if(j==k){
+                if(k<n || (k==n && a[x[n]][x[1]]!=0)) return ;
+            }
         }
-        return false;
-    }
-    
-    for (int v = 1; v < V; v++) {
-        if (isSafe(v, graph, path, pos)) {
-            path[pos] = v;
-            
-            if (hamiltonianCycle(graph, path, pos + 1))
-                return true;
-            
-            path[pos] = -1;
-        }
-    }
-    
-    return false;
+
+    }while(1);
 }
 
-int main() {
-    int graph[V][V] = {
-        {0, 1, 0, 1, 0},
-        {1, 0, 1, 1, 1},
-        {0, 1, 0, 0, 1},
-        {1, 1, 0, 0, 1},
-        {0, 1, 1, 1, 0}
-    };
-    
-    int path[V];
-    for (int i = 0; i < V; i++)
-        path[i] = -1;
-    
-    path[0] = 0;
-    
-    if (!hamiltonianCycle(graph, path, 1))
-        printf("No Hamiltonian Cycle exists\\n");
-    
-    return 0;
+
+void hamiltonian(int k){
+    do{
+        nextvalue(k);
+        if(x[k]==0) return;
+        if(k==n){
+            count++;
+            for(int i=1;i<=n;i++){
+                printf("%d-",x[i]);
+            }
+            printf("\\n");
+
+        }else{
+            hamiltonian(k+1);
+        }
+
+    }while(1);
+}
+
+
+
+void main(){
+    int i,j;
+
+    printf("Enter nu of vertices: ");
+    scanf("%d",&n);
+    printf("\\nEnter adjacency Matrix of graph\\n");
+    for(i=1;i <= n;i++)
+    {
+        for( j=1;j <= n;j++)
+            scanf("%d",&a[i][j]);
+    }
+    printf("enter the starting vertex: ");
+    scanf("%d",&s);
+    x[1]=s;
+    hamiltonian(2);
+    printf("no. of hamiltonian cycles in given graph: %d ",count);
+
 }`,
 
-    'graph-coloring': `// Graph Coloring - Backtracking
-#include <stdio.h>
-#include <stdbool.h>
-#define V 5
+    'graph-coloring': `// graph coloring
+#include<stdio.h>
+int n,m,x[10]={0},a[10][10];
 
-void printSolution(int color[]) {
-    printf("Vertex colors:\\n");
-    for (int i = 0; i < V; i++)
-        printf("Vertex %d -> Color %d\\n", i, color[i]);
+void nextvalue(int k){
+    int j;
+    do{
+        x[k]=(x[k]+1)%(m+1);
+        if(x[k]==0) return;
+        for(j=1;j<=n;j++){
+            if((a[k][j] !=0 && x[k]==x[j])|| (a[j][k] != 0 && x[k]==x[j])) break;
+
+
+        }
+        if(j==n+1) return;
+
+    }while(1);
 }
 
-bool isSafe(int v, int graph[V][V], int color[], int c) {
-    for (int i = 0; i < V; i++)
-        if (graph[v][i] && c == color[i])
-            return false;
-    return true;
+void mcoloring(int k){
+    do{
+        nextvalue(k);
+        if(x[k]==0) return;
+        if(k==n){
+            printf("{");
+            for(int i=1;i<=n;i++){
+                printf("%d, ",x[i]);
+            }
+            printf("\\t}\\n");
+            
+        }else{
+            mcoloring(k+1);
+
+        }
+    }while(1);
 }
 
-bool graphColoring(int graph[V][V], int m, int color[], int v) {
-    if (v == V)
-        return true;
-    
-    for (int c = 1; c <= m; c++) {
-        if (isSafe(v, graph, color, c)) {
-            color[v] = c;
-            
-            if (graphColoring(graph, m, color, v + 1))
-                return true;
-            
-            color[v] = 0;
+void main(){
+    int v;
+    printf("\\n Enter the number of vertices: ");
+    scanf("%d",&n);
+    printf("\\n Enter the number of colors: ");
+    scanf("%d",&m);
+    printf("\\n Enter the adjacency matrix: ");
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=n;j++){
+            scanf("%d",&a[i][j]);
         }
     }
-    
-    return false;
-}
-
-int main() {
-    int graph[V][V] = {
-        {0, 1, 1, 1, 0},
-        {1, 0, 1, 0, 0},
-        {1, 1, 0, 1, 1},
-        {1, 0, 1, 0, 1},
-        {0, 0, 1, 1, 0}
-    };
-    
-    int m = 3; // Number of colors
-    int color[V] = {0};
-    
-    if (graphColoring(graph, m, color, 0)) {
-        printf("Solution exists with %d colors:\\n", m);
-        printSolution(color);
-    } else {
-        printf("No solution exists with %d colors\\n", m);
-    }
-    
-    return 0;
+    mcoloring(1);
 }`,
 
     'binary-search': `// Binary Search

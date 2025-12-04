@@ -14,5 +14,5 @@ export const algorithmsData = [
   { id: 'nqueens', name: 'N-Queens', fullName: 'N-Queens Problem' },
   { id: 'hamiltonian', name: 'Hamiltonian', fullName: 'Hamiltonian Path & Cycle' },
   { id: 'graph-coloring', name: 'Graph Coloring', fullName: 'Graph Coloring Problem' },
-  { id: 'binary-search', name: 'Binary Search', fullName: 'Binary Search Algorithm' }
+  { id: 'binary-search', name: 'Binary Search', fullName: 'Binary Search Algorithm.' }
 ];
