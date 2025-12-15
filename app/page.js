@@ -106,14 +106,14 @@ export default function Home() {
 
             <div className={styles.content}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>Algorithm Code Portal</h1>
+                    <h1 className={styles.title}>Let's Hope for the Best</h1>
                     <p className={styles.subtitle}>
-                        Specially Made for ....
+                        All the best!!
                     </p>
                 </header>
 
                 <div className={styles.setSelector}>
-                    <label className={styles.selectorLabel}>Select Algorithm</label>
+                    <label className={styles.selectorLabel}>Select Set</label>
                     <div className={styles.algorithmGrid}>
                         {algorithmsData.map((algo) => (
                             <button
