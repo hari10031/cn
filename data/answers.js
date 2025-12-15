@@ -1,772 +1,1126 @@
 export const answersData = {
-    'bfs': `//bfs
+    'set1': [
+        {
+            title: 'Q1: a) ifconfig, netstat',
+            code: `// a) ifconfig, netstat
 
-#include <stdio.h>
-#include <stdlib.h>
-#define MAX 100
+/*
+1. ifconfig (Interface Configuration)
+   - Function: Used to configure the kernel-resident network interfaces. It is used at boot time to set up interfaces as necessary. After that, it is usually only needed when debugging or when system tuning is needed.
+   - Usage:
+     $ ifconfig          // Displays all active interfaces
+     $ ifconfig -a       // Displays all interfaces, including down ones
+     $ ifconfig eth0     // View details of specific interface
+     $ ifconfig eth0 up  // Enable an interface
 
-int queue[MAX], front = -1, rear = -1;
-int visited[MAX];
+2. netstat (Network Statistics)
+   - Function: Prints information about the Linux networking subsystem.
+   - Usage:
+     $ netstat -a        // List all ports
+     $ netstat -at       // List all TCP ports
+     $ netstat -au       // List all UDP ports
+     $ netstat -l        // List only listening ports
+     $ netstat -s        // Display statistics for each protocol
+     $ netstat -tp       // Display PID and program name
+*/`
+        },
+        {
+            title: 'Q2: b) SERVER - Connection Oriented Iterative',
+            code: `// SERVER CODE
+// Connection Oriented Iterative Server (TCP)
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<string.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<arpa/inet.h>
 
-void enqueue(int v) {
-    if (front == -1) front = 0;
-    queue[++rear] = v;
-}
-
-int dequeue() {
-    return queue[front++];
-}
-
-int isEmpty() {
-    return front == -1 || front > rear;
-}
-
-void bfs(int graph[][MAX], int n, int start) {
-    visited[start] = 1;
-    enqueue(start);
-    
-    printf("BFS Traversal: ");
-    while (!isEmpty()) {
-        int v = dequeue();
-        printf("%d ", v);
-        
-        for (int i = 0; i < n; i++) {
-            if (graph[v][i] == 1 && !visited[i]) {
-                visited[i] = 1;
-                enqueue(i);
-            }
-        }
+int main(){
+    int sockfd, newsockfd;
+    socklen_t cilien;
+    struct sockaddr_in server,client;
+    char a[50];
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
     }
-}
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=htonl(INADDR_ANY);
+    if(server.sin_addr.s_addr<0){
+        printf("Error in IP address\\n");
+        exit(1);
+    }
+    server.sin_port=htons(8082);
+    if(bind(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in binding\\n");
+        exit(1);
+    }
+    if(listen(sockfd,5)<0){
+        printf("Error in listening\\n");
+        exit(1);
+    }
+    cilien = sizeof(client);
+    while(1){
+        newsockfd=accept(sockfd,(struct sockaddr *)&client,&cilien);
+        if(newsockfd<0){
+            printf("Error in accepting\\n");
+            exit(1);
+        }
+        memset(a,0,sizeof(a));
+        read(newsockfd,a,50);
+        printf("Server Recived: %s\\n",a);
+        write(newsockfd,a,50);
+        // printf("Message from client: %s\\n",a);
+        if(strcmp(a,"exit")){
+            printf("Server Exit...\\n");
+            close(newsockfd);
+            break;
+        }
+        close(newsockfd);
+    }
+    close(sockfd);
 
-int main() {
-    int n = 5;
-    int graph[MAX][MAX] = {
-        {0, 1, 1, 0, 0},
-        {1, 0, 0, 1, 1},
-        {1, 0, 0, 0, 1},
-        {0, 1, 0, 0, 0},
-        {0, 1, 1, 0, 0}
-    };
-    
-    bfs(graph, n, 0);
+}`
+        },
+        {
+            title: 'Q2: b) CLIENT - Connection Oriented Iterative',
+            code: `// CLIENT CODE
+// Connection Oriented Iterative Client (TCP)
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<string.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<arpa/inet.h>
+
+
+int main(){
+    int sockfd;
+    struct sockaddr_in server;
+    char a[50],a1[50];
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    if(server.sin_addr.s_addr<0){
+        printf("Error in IP address\\n");
+        exit(1);
+    }
+    server.sin_port=htons(8082);
+    if(connect(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in connection\\n");
+        exit(1);
+    }
+    printf("enter a message: \\n");
+    fgets(a,50,stdin);
+    write(sockfd,a,50);
+    memset(a1,0,sizeof(a1));
+    read(sockfd,a1,50);
+    printf("client received the msg: %s\\n",a1);
+    if(!strcmp(a,"exit")){
+        printf("Client Exit...\\n");
+    }
+    close(sockfd);
+
+
+
+
     return 0;
-}`,
-
-    'dfs': `// DFS - Depth First Search
-#include <stdio.h>
-#define MAX 100
-
-int visited[MAX];
-
-void dfs(int graph[][MAX], int n, int v) {
-    visited[v] = 1;
-    printf("%d ", v);
-    
-    for (int i = 0; i < n; i++) {
-        if (graph[v][i] == 1 && !visited[i]) {
-            dfs(graph, n, i);
+}`
         }
-    }
-}
+    ],
 
-int main() {
-    int n = 5;
-    int graph[MAX][MAX] = {
-        {0, 1, 1, 0, 0},
-        {1, 0, 0, 1, 1},
-        {1, 0, 0, 0, 1},
-        {0, 1, 0, 0, 0},
-        {0, 1, 1, 0, 0}
-    };
+    'set2': [
+        {
+            title: 'Q1: tcpdump, nslookup',
+            code: `// tcpdump, nslookup
+
+/*
+1. tcpdump
+   - Function: A command-line packet analyzer. It prints the contents of network packets.
+   - Usage:
+     $ tcpdump -i eth0        // Capture packets on specific interface
+     $ tcpdump -c 5           // Capture only 5 packets
+     $ tcpdump -A             // Print captured packets in ASCII
+     $ tcpdump port 80        // Capture traffic on a specific port
+     $ tcpdump src 192.168.1.1 // Capture traffic from specific source
+
+2. nslookup (Name Server Lookup)
+   - Function: A tool for querying the Domain Name System (DNS) to obtain domain name or IP address mapping.
+   - Usage:
+     $ nslookup google.com    // Find IP of domain
+     $ nslookup 8.8.8.8       // Reverse lookup (find domain of IP)
+     $ nslookup -type=mx google.com // Query for MX records
+*/`
+        },
+        {
+            title: 'Q2: SERVER - Connection Less Iterative',
+            code: `// SERVER CODE
+// Connection Less Iterative Server (UDP)
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<unistd.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<netinet/in.h>
+
+int main(){
+    int sockfd,newsockfd;
+    socklen_t clilen;
+    char a[50];
+    struct sockaddr_in server,client;
+    sockfd=socket(AF_INET,SOCK_DGRAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    server.sin_port=htons(8080);
+    if(bind(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in binding\\n");
+        exit(1);
+    }
+    clilen=sizeof(client);
+    recvfrom(sockfd,a,50,0,(struct sockaddr *)&client,&clilen);
+    printf("Message from client: %s\\n",a);
+    sendto(sockfd,a,50,0,(struct sockaddr *)&client,clilen);
     
-    printf("DFS Traversal: ");
-    dfs(graph, n, 0);
+    close(sockfd);
+
+
+
+}`
+        },
+        {
+            title: 'Q2: CLIENT - Connection Less Iterative',
+            code: `// CLIENT CODE
+// Connection Less Iterative Client (UDP)
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<unistd.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<netinet/in.h>
+#include <arpa/inet.h>
+int main(){
+    int sockfd,n,servlen;
+    socklen_t clilen;
+    char a[50],a1[50];
+    struct sockaddr_in server;
+    sockfd=socket(AF_INET,SOCK_DGRAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");   
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=inet_addr("127.0.0.1");
+    server.sin_port=htons(8080);
+
+    printf("Enter String: ");
+    fgets(a,50,stdin);
+    if(sendto(sockfd,a,50,0,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in sending\\n");
+        exit(1);
+    }
+    servlen=sizeof(server);
+    n = recvfrom(sockfd,a1,50,0,(struct sockaddr *)&server,&servlen);
+
+    if(n<0){
+        printf("Error in receiving\\n");
+        exit(1);
+    }
+    else{
+        printf("Message from server: %s\\n",a1);
+    }
+    close(sockfd);
+
+
+
+
+
+
     return 0;
-}`,
 
-    'quicksort': `//quick sort
+}`
+        }
+    ],
+
+    'set3': [
+        {
+            title: 'Q1: traceroute, FTP',
+            code: `// traceroute, FTP
+
+/*
+1. traceroute
+   - Function: Diagnostic tool for displaying the route (path) and measuring transit delays of packets across an Internet Protocol (IP) network.
+   - Usage:
+     $ traceroute google.com  // Trace path to google.com
+     $ traceroute -m 5 google.com // Set max hops to 5
+
+2. FTP (File Transfer Protocol)
+   - Function: Standard network protocol used for the transfer of computer files between a client and server on a computer network.
+   - Usage:
+     $ ftp 192.168.1.50       // Connect to FTP server
+     > user username          // Enter username
+     > pass password          // Enter password
+     > ls                     // List files
+     > get file.txt           // Download file
+     > put file.txt           // Upload file
+     > quit                   // Exit
+*/`
+        },
+        {
+            title: 'Q2: SERVER - Connection Oriented Concurrent',
+            code: `// SERVER CODE
+// Connection Oriented Concurrent Server (TCP)
 #include<stdio.h>
-int arr[10]={99,98,97,96,95,94,93,92,91,90};
-
-int Parition(int l,int r){
-    int pivot = arr[l];
-    int i =l;
-    int j= r;
-    while (i < j) {
-        while (i <= r && arr[i] <= pivot)
-            i++;
-
-        while (j >= l && arr[j] > pivot)
-            j--;
-
-        if (i < j) {
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
-        }
-    }
-
-    int temp = arr[l];
-    arr[l] = arr[j];
-    arr[j] = temp;
-
-    return j;
-
-
-}
-
-void quick(int l,int r){
-    if(l<r){
-        int pi = Parition(l,r);
-        quick(l,pi-1);
-        quick(pi+1,r);
-    }
-    
-}
-
-
-
-void main(){
-    
-    quick(0,9);
-    for(int i=0;i<10;i++){
-        printf("%d ",arr[i]);
-    }
-}`,
-
-    'mergesort': `// merge sort
-
-#include<stdio.h>
-int arr[10]={99,98,97,96,95,94,93,92,91,90};
-
-void merge(int l,int mid,int r){
-    int temp[10];
-    int i = l;
-    int j = mid+1;
-    int m = 0;
-    while(i<=mid && j<=r){
-        if(arr[i]<arr[j]){
-            temp[m]=arr[i];
-            i++;
-        }
-        else{
-            temp[m]=arr[j];
-            j++;
-        }
-        m++;
-    }
-    while(i<=mid){
-        temp[m]=arr[i];
-        i++;
-        m++;
-    }
-    while(j<=r){
-        temp[m]=arr[j];
-        j++;
-        m++;
-    }
-    for(int i=l;i<=r;i++){
-        arr[i]=temp[i-l];
-    }
-    
-}
-
-void mergeSort(int l,int r){
-    if(l<r){
-        int mid=(l+r)/2;
-        mergeSort(l,mid);
-        mergeSort(mid+1,r);
-        merge(l,mid,r);
-    }
-    
-}
-
-void main(){
-    
-    mergeSort(0,9);
-    for(int i=0;i<10;i++){
-        printf("%d ",arr[i]);
-    }
-}`,
-
-    'floyd': `//floyd warshal
-
-#include<stdio.h>
-
-#define N 4
-#define INF 99999
-int main(){
-    int dist[N][N]={{0,3,INF,7},{8,0,2,INF},{5,INF,0,1},{2,INF,INF,0}};
-
-    for(int k=0;k<N;k++){
-        for(int i=0;i<N;i++){
-            for(int j=0;j<N;j++){
-                if(dist[i][k] + dist[k][j] <dist[i][j] && dist[i][k] != INF && dist[k][j] != INF){
-                    dist[i][j] = dist[i][k] + dist[k][j];
-
-                }
-            }
-        }
-    }
-    for(int i=0;i<N;i++){
-        for(int j=0;j<N;j++){
-            printf("%d ",dist[i][j]);
-        }
-        printf("\\n");
-    }
-
-
-}`,
-
-    'dijkstra': `//dijkstra algo
-
-#include<stdio.h>
-#define V 6
-int graph[V][V] = {
-        {0, 4, 0, 0, 0, 0},
-        {4, 0, 8, 0, 0, 0},
-        {0, 8, 0, 7, 0, 4},
-        {0, 0, 7, 0, 9, 14},
-        {0, 0, 0, 9, 0, 10},
-        {0, 0, 4, 14, 10, 0}
-    };
-#define INF 99999
-
-int minDistance(int visited[],int dist[]){
-    int min= INF;
-    int idx = -1;
-    for(int i=0;i<V;i++){
-        if(!visited[i] && dist[i]<min){
-            min = dist[i];
-            idx = i;
-        }
-    }
-    return idx;
-}
-
-
-void dijkstra(int start){
-    int dist[V];
-    int visited[V];
-    for(int i=0;i<V;i++){
-        dist[i] = INF;
-        visited[i] = 0;
-
-    }
-    dist[start] = 0;
-    for(int i =0;i<V-1;i++){
-        int u = minDistance(visited,dist);
-        visited[u]=1;
-        for(int v=0;v<V;v++){
-            if(!visited[v] && graph[u][v]!=0 && dist[u]!=INF && dist[u] + graph[u][v] < dist[v] ){
-                dist[v] = dist[u] + graph[u][v];
-            }
-        }
-    }
-    printf("Vertex Distance from source vertex %d\\n",start);
-    for(int i=0;i<V;i++){
-        printf("%d ",dist[i]);
-    }
-
-}
-
-void main(){
-    dijkstra(0);
-}`,
-
-    'prims': `//prims
-
-#include <stdio.h>
-#include <limits.h>
-
-#define INF 999999
-
-int main() {
-    int n;
-    printf("Enter number of vertices: ");
-    scanf("%d", &n);
-
-    int graph[20][20];
-
-    printf("Enter the adjacency matrix (use 0 for no edge):\\n");
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            scanf("%d", &graph[i][j]);
-            if (graph[i][j] == 0 && i != j)
-                graph[i][j] = INF;  // replace 0 with INF (except diagonal)
-        }
-    }
-    int start;
-    printf("Enter starting vertex (1 to %d): ",n);
-    scanf("%d",&start);
-    start--;
-    int selected[20]={0};
-    selected[start] = 1;
-    int edgecount = 0;
-    int mst =0;
-    while(edgecount<n-1){
-        int min = INF;
-        int u =-1,v=-1;
-        for(int i=0;i<n;i++){
-            if(selected[i]){
-                for(int j=0;j<n;j++){
-                    if(!selected[j] && graph[i][j] <min){
-                        min = graph[i][j];
-                        u = i;
-                        v = j;
-                    }
-                }
-
-            }
-
-        }
-        if(u !=-1 && v!=-1){
-            printf("%d -- %d cost = %d\\n",u+1,v+1,min);
-            selected[v] = 1;
-            mst +=min;
-            edgecount++;
-        }
-    }
-
-
-
-}`,
-
-    'kruskals': `#include <stdio.h>
-
-#define INF 999
-int parent[20];
-int find(int i){
-    while(parent[i] != i) i = parent[i];
-    return i;
-}
-
-void union1(int i,int j){
-    parent[i] = parent[j]; 
-}
-
-void main(){
-    int cost[20][20];
-    int n,i,j,min,u,v,a,b,ne=1,mincost=0;
-    printf("ENter number of vertices: ");
-    scanf("%d",&n);
-    printf("Enter the cost matrix:\\n");
-    for(i=1;i<=n;i++){
-        for(j=1;j<=n;j++){
-            scanf("%d",&cost[i][j]);
-            if(cost[i][j] == 0) cost[i][j] = INF;
-        }
-    }
-    for(i = 1;i<=n;i++) parent[i] = i;
-
-    printf("\\n Edges in the Minimum Spanning Tree:\\n");
-
-    while(ne<n){
-        min = INF;
-        for(i=1;i<=n;i++){
-            for(j=1;j<=n;j++){
-                if(cost[i][j]<min ){
-                    min = cost[i][j];
-                    u=i;
-                    v=j;
-                }
-            }
-        }
-        a = find(u);
-        b= find(v);
-        if(a!=b){
-            printf("%d -- %d cost = %d\\n",u,v,min);
-            union1(a,b);
-            mincost += min;
-            ne++;
-        }
-        cost[u][v] = cost[v][u] = INF;
-    }
-    printf("Minimum cost = %d\\n",mincost);
-}`,
-
-    'knapsack-brute': `// knapsack brute
-
-#include<stdio.h>
-#define N 4      
-#define W 7 
+#include<stdlib.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<string.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<arpa/inet.h>
 
 int main(){
-    int weight[N] = {1, 3, 4, 5};
-    int value[N]  = {1, 4, 5, 7};
-    int maxValue = 0;
-    int bestMask = 0;
-    int toalSubsets = 1<<N;
-    for(int i =0;i<toalSubsets;i++){
-        int sumweight = 0;
-        int sumvalue = 0;
-        for(int j=0;j<N;j++){
-            if(i & (1<<j)){
-                sumweight += weight[j];
-                sumvalue += value[j];
+    int sockfd,newsockfd,pid,n;
+    socklen_t clilen;
+    char a[50];
+    struct sockaddr_in server,client;
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=htonl(INADDR_ANY);
+    server.sin_port=htons(8080);
+    if(bind(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in binding\\n");
+        exit(1);
+    }
+    if(listen(sockfd,5)<0){
+        printf("Error in listening\\n");
+        exit(1);
+    }
+    while(1){
+        clilen=sizeof(client);
+        newsockfd=accept(sockfd,(struct sockaddr *)&client,&clilen);
+        pid = fork();
+        if(pid ==0){
+            while(1){
+                memset(a,0,sizeof(a));
+                n= read(newsockfd,a,sizeof(a)-1);
+                if(n<=0) break;
+                a[n] = '\\0';
+                printf("Instance: %d,\\n \\t Server Recived %s\\n",(int)getpid(),a);
+                write(newsockfd,a,sizeof(a));
+                if(strcmp(a,"exit")==0){
+                    printf("Closing connection for instance: %d\\n",(int)getpid());
+                    break;
+                }
             }
-            
-        }
-        if(sumweight<= W && sumvalue > maxValue){
-            maxValue = sumvalue;
-            bestMask = i;
-        }
-    }
-    printf("Maximum value: %d\\n",maxValue);
-    for(int i =0;i<N;i++){
-        if(bestMask & (1<<i)){
-            printf("%d ",i);
-        }
-    }
-
-}`,
-
-    'knapsack-greedy': `//knapsack greedy
-#include<stdio.h>
-#define N 4      
-#define W 7 
-
-int main(){
-    int weight[N] = {1, 3, 4, 5};
-    int value[N]  = {1, 4, 5, 7};
-    double ratio[N];
-    for(int i=0;i<N;i++){
-        ratio[i] = (double)value[i]/weight[i];
-    }
-    for(int i=0;i<N;i++){
-        for(int j=i+1;j<N;j++){
-
-            if(ratio[i]<ratio[j]){
-                double temp = ratio[i];
-                ratio[i] = ratio[j];
-                ratio[j] = temp;
-                int temp2 = weight[i];
-                weight[i] = weight[j];
-                weight[j] = temp2;
-                int temp3 = value[i];
-                value[i] = value[j];
-                value[j] = temp3;
-            }
-        }
-    }
-    double totalvalue = 0;
-    int reaminig = W;
-    for(int i =0;i<N;i++){
-        if(weight[i]<=reaminig){
-            totalvalue += value[i];
-            reaminig -= weight[i];
+            close(newsockfd);
+            exit(0);
         }else{
-            totalvalue += ratio[i]*reaminig;
+
+            close(newsockfd);
+        }
+    }
+}`
+        },
+        {
+            title: 'Q2: CLIENT - Connection Oriented Concurrent',
+            code: `// CLIENT CODE
+// Connection Oriented Concurrent Client (TCP)
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+
+
+int main(){
+    int sockfd,n;
+    struct sockaddr_in server;
+    char a[50],a1[50],*pos;
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=inet_addr("127.0.0.1");
+    server.sin_port=htons(8080);
+    if(connect(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in connection\\n");
+        exit(1);
+    }
+    while(1){
+        memset(a,0,sizeof(a));
+        printf("Enter the msg: \\n");
+        fgets(a,sizeof(a),stdin);
+        if((pos=strchr(a,'\\n'))!=NULL)
+            *pos='\\0';
+        write(sockfd,a,sizeof(a));
+        n= read(sockfd,a1,sizeof(a1));
+        printf("Client Recived: %s\\n",a1);
+        if(!strcmp(a,"exit")){
+            printf("Closing connection\\n");
+            close(sockfd);
             break;
         }
     }
-    printf("Maximum value in knapsack is %.2f",totalvalue);
-}`,
 
-    'knapsack-dp': `//knapsack dp
-
-#include<Stdio.h>
-#define N 4     
-#define W 7     
-int main() {
-    int weight[N] = {1, 3, 4, 5};
-    int value[N]  = {1, 4, 5, 7};
-    int dp[N+1][W+1];
-    for(int i =0;i<=N;i++){
-        for(int j =0;j<=W;j++){
-            if(i==0 || j== 0) {
-                dp[i][j] = 0;
-            }else if(weight[i-1]<=j){
-                int include = value[i-1]+dp[i-1][j-weight[i-1]];
-                int exclude = dp[i-1][j];
-                dp[i][j] = (include>exclude)?include:exclude;
-            }else{
-                dp[i][j] = dp[i-1][j];
-            }
-        }
-
-    }
-    printf("Maximum value = %d\\n", dp[N][W]);
-
-
-}`,
-
-    'tsp': `#include<stdio.h>
-#define INF 99999
-int n,cost[20][20],dp[n][1<< 15];
-
-int tsp(int pos,int mask){
-    if(mask == (1<<n) -1) return cost[pos][0];
-    if(dp[pos][mask] != -1) return dp[pos][mask];
-    int ans = INF;
-    for(int city = 0;city<n;city++){
-        if((mask &(1<<city)) == 0){
-            int newans = cost[pos][city] +tsp(city, mask | (1<<city));
-            if(newans < ans){
-                ans = newans;
-            }
-        }
-    }
-    dp[pos][mask] = ans;
-    return ans;
-}
-
-int main(){
-    int i,j;
-    printf("Enter the number of cities: ");
-    scanf("%d",&n);
-    printf("Enter the cost matrix: \\n");
-    for(i=0;i<n;i++){
-        for(j=0;j<n;j++){
-            scanf("%d",&cost[i][j]);
-            if(cost[i][j] == 0) cost[i][j] = INF;
-        }
-    }
-    for(i=0;i<n;i++){
-        for(j=0;j<(1<<n);j++){
-            dp[i][j] = -1;
-        }
-    }
-    int ans = tsp(0,1);
-    printf("Minimum cost = %d\\n",ans);
-    return 0;
-}`,
-
-    'nqueens': `#include<stdio.h>
-int x[30],count = 0;
-#include<math.h>
-
-#include <stdlib.h>
-
-
-int place(int k,int n){
-    for(int i=1;i<k;i++){
-        if(x[i] == n || abs(x[i]-n) == abs(k-i) ){
-            return 0;
-        }
-    }
-    return 1;
-}
-void print_sol(int n){
-    int i,j;
-    count++;
-    printf("\\n\\nSolution%d:\\n",count);
-    for(i=1;i<=n;i++){
-        for(j=1;j<=n;j++){
-            if(x[i]==j) printf("Q\\t");
-            else printf("-\\t");
-        }
-        printf("\\n");
-    }
-
-}
-void queen(int k,int n){
-    for(int i =1;i<=n;i++){
-        if(place(k,i)){
-            x[k] = i;
-            if(k==n) print_sol(n);
-            else queen(k+1,n);
-
-        }
-    }
     
-}
-
-
-void main(){
-    int n=4;
-    // printf("Enter the number of queens: ");
-    // scanf("%d",&n);
-    queen(1,n);
-    printf("Total solutions = %d\\n",count);
-}`,
-
-    'hamiltonian': `// hamiltonian cycle
-
-#include<stdio.h>
-int n;
-int s;
-int x[10]={0};
-int count=0;
-int a[10][10];
-
-void nextvalue(int k){
-    int j;
-    do{
-        x[k] = (x[k]+1)%(n+1);
-        
-        if(x[k]==0) return ;
-        if(a[x[k-1]][x[k]] != 0){
-            for(j=1;j<k;j++){
-                if(x[j] == x[k]) break;
-            }
-            if(j==k){
-                if(k<n || (k==n && a[x[n]][x[1]]!=0)) return ;
-            }
+}`
         }
+    ],
 
-    }while(1);
-}
+    'set4': [
+        {
+            title: 'Q1: telnet, ping',
+            code: `// telnet, ping
 
+/*
+1. telnet
+   - Function: User interface to the TELNET protocol. Enables communication with another host using the TELNET protocol. (Not secure, data sent in clear text).
+   - Usage:
+     $ telnet 192.168.1.1     // Connect to host
+     $ telnet google.com 80   // Connect to specific port (debugging)
 
-void hamiltonian(int k){
-    do{
-        nextvalue(k);
-        if(x[k]==0) return;
-        if(k==n){
-            count++;
-            for(int i=1;i<=n;i++){
-                printf("%d-",x[i]);
-            }
-            printf("\\n");
-
-        }else{
-            hamiltonian(k+1);
-        }
-
-    }while(1);
-}
-
-
-
-void main(){
-    int i,j;
-
-    printf("Enter nu of vertices: ");
-    scanf("%d",&n);
-    printf("\\nEnter adjacency Matrix of graph\\n");
-    for(i=1;i <= n;i++)
-    {
-        for( j=1;j <= n;j++)
-            scanf("%d",&a[i][j]);
-    }
-    printf("enter the starting vertex: ");
-    scanf("%d",&s);
-    x[1]=s;
-    hamiltonian(2);
-    printf("no. of hamiltonian cycles in given graph: %d ",count);
-
-}`,
-
-    'graph-coloring': `// graph coloring
-#include<stdio.h>
-int n,m,x[10]={0},a[10][10];
-
-void nextvalue(int k){
-    int j;
-    do{
-        x[k]=(x[k]+1)%(m+1);
-        if(x[k]==0) return;
-        for(j=1;j<=n;j++){
-            if((a[k][j] !=0 && x[k]==x[j])|| (a[j][k] != 0 && x[k]==x[j])) break;
-
-
-        }
-        if(j==n+1) return;
-
-    }while(1);
-}
-
-void mcoloring(int k){
-    do{
-        nextvalue(k);
-        if(x[k]==0) return;
-        if(k==n){
-            printf("{");
-            for(int i=1;i<=n;i++){
-                printf("%d, ",x[i]);
-            }
-            printf("\\t}\\n");
-            
-        }else{
-            mcoloring(k+1);
-
-        }
-    }while(1);
-}
-
-void main(){
-    int v;
-    printf("\\n Enter the number of vertices: ");
-    scanf("%d",&n);
-    printf("\\n Enter the number of colors: ");
-    scanf("%d",&m);
-    printf("\\n Enter the adjacency matrix: ");
-    for(int i=1;i<=n;i++){
-        for(int j=1;j<=n;j++){
-            scanf("%d",&a[i][j]);
-        }
-    }
-    mcoloring(1);
-}`,
-
-    'binary-search': `// Binary Search
+2. ping (Packet Internet Groper)
+   - Function: Used to test the reachability of a host on an Internet Protocol (IP) network and to measure the round-trip time. It uses ICMP.
+   - Usage:
+     $ ping google.com        // Ping a host
+     $ ping -c 5 google.com   // Send 5 packets then stop
+     $ ping -i 2 google.com   // Set interval between packets
+*/`
+        },
+        {
+            title: 'Q2: SERVER - Connection Less Concurrent',
+            code: `// SERVER CODE
+// Connection Less Concurrent Server (UDP)
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string.h>
 
-int binarySearch(int arr[], int l, int r, int x) {
-    while (l <= r) {
-        int mid = l + (r - l) / 2;
-        
-        printf("Searching in range [%d, %d], mid=%d, arr[mid]=%d\\n", 
-               l, r, mid, arr[mid]);
-        
-        if (arr[mid] == x) {
-            printf("Element found at index %d\\n", mid);
-            return mid;
+int main()
+{
+    int sockfd, n, clilen, pid;
+    struct sockaddr_in serv_addr, cli_addr;
+    char a[50];
+
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0)
+    {
+        printf("socket failed\\n");
+        exit(0);
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (serv_addr.sin_addr.s_addr < 0)
+    {
+        printf("Invalid IP address: Unable to decode\\n");
+        exit(0);
+    }
+    serv_addr.sin_port = htons(3100);
+
+    if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        printf("Bind failed\\n");
+        exit(1);
+    }
+
+    clilen = sizeof(cli_addr);
+    printf("Waiting for clients\\n");
+
+    while (1)
+    {
+        memset(a, 0, sizeof(a));
+        n = recvfrom(sockfd, a, 50, 0, (struct sockaddr *)&cli_addr, (socklen_t *)&clilen);
+        if (n > 0)
+        {
+            pid = fork();
+            if (pid == 0)
+            {
+                printf("Instance : %d \\n\\tServer Recieved: %s\\n", (int)getpid(), a);
+                if (sendto(sockfd, a, 50, 0, (struct sockaddr *)&cli_addr, (socklen_t)clilen) < 0)
+                {
+                    printf("UDP sending failed\\nExiting... \\n");
+                    close(sockfd);
+                    exit(1);
+                }
+                close(sockfd);
+                break;
+            }
         }
-        
-        if (arr[mid] < x) {
-            printf("Search right half\\n");
-            l = mid + 1;
-        } else {
-            printf("Search left half\\n");
-            r = mid - 1;
+        else
+        {
+            printf("UDP receiving failed\\nExiting... \\n");
+            close(sockfd);
+            exit(1);
         }
     }
-    
-    return -1;
-}
-
-int binarySearchRecursive(int arr[], int l, int r, int x, int depth) {
-    if (r >= l) {
-        int mid = l + (r - l) / 2;
-        
-        for (int i = 0; i < depth; i++) printf("  ");
-        printf("Range [%d,%d], mid=%d, value=%d\\n", l, r, mid, arr[mid]);
-        
-        if (arr[mid] == x)
-            return mid;
-        
-        if (arr[mid] > x)
-            return binarySearchRecursive(arr, l, mid - 1, x, depth + 1);
-        
-        return binarySearchRecursive(arr, mid + 1, r, x, depth + 1);
-    }
-    
-    return -1;
-}
-
-int main() {
-    int arr[] = {2, 3, 4, 10, 40, 50, 60, 70, 80, 90};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int x = 40;
-    
-    printf("Array: ");
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\\nSearching for: %d\\n\\n", x);
-    
-    printf("Iterative Binary Search:\\n");
-    int result = binarySearch(arr, 0, n - 1, x);
-    
-    printf("\\n\\nRecursive Binary Search:\\n");
-    result = binarySearchRecursive(arr, 0, n - 1, x, 0);
-    if (result == -1)
-        printf("Element not found\\n");
-    else
-        printf("Element found at index %d\\n", result);
-    
     return 0;
 }`
+        },
+        {
+            title: 'Q2: CLIENT - Connection Less Concurrent',
+            code: `// CLIENT CODE
+// Connection Less Concurrent Client (UDP)
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string.h>
+
+int main()
+{
+    int sockfd, servlen;
+    struct sockaddr_in serv_addr;
+    char a[50], a1[50], *pos;
+
+    servlen = sizeof(serv_addr);
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0)
+    {
+        printf("socket failed\\n");
+        exit(0);
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    serv_addr.sin_port = htons(3100);
+
+    memset(a, 0, sizeof(a));
+    printf("Enter the msg :\\n");
+    fgets(a, sizeof(a), stdin);
+
+    if ((pos = strchr(a, '\\n')) != NULL)
+        *pos = '\\0';
+
+    if (sendto(sockfd, a, 50, 0, (struct sockaddr *)&serv_addr, (socklen_t)servlen) < 0)
+    {
+        printf("UDP client : Message sending failed\\nExiting...");
+        close(sockfd);
+        exit(1);
+    }
+
+    if (recvfrom(sockfd, a1, 50, 0, (struct sockaddr *)&serv_addr, (socklen_t *)&servlen) < 0)
+    {
+        printf("UDP client : Message receiveing failed\\nExiting...");
+        close(sockfd);
+        exit(1);
+    }
+
+    printf("Client Received the msg: %s\\n", a1);
+    close(sockfd);
+    return 0;
+}`
+        }
+    ],
+
+    'set5': [
+        {
+            title: 'Q1: ifconfig, netstat',
+            code: `// ifconfig, netstat
+
+/*
+1. ifconfig (Interface Configuration)
+   - Function: Used to configure network interfaces.
+   - Usage:
+     $ ifconfig          // Show active interfaces
+     $ ifconfig -a       // Show all interfaces
+     $ ifconfig eth0     // Show specific interface
+
+2. netstat (Network Statistics)
+   - Function: Network statistics (connections, routing tables, etc).
+   - Usage:
+     $ netstat -a        // All sockets
+     $ netstat -t        // TCP sockets
+     $ netstat -u        // UDP sockets
+     $ netstat -l        // Listening sockets
+*/`
+        },
+        {
+            title: 'Q2: SERVER - Date Time',
+            code: `// SERVER CODE
+// Date Time Server
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<time.h>
+
+int main(){
+    int sockfd,newsockfd;
+    socklen_t clilen;
+    struct sockaddr_in server,client;
+    char buffer[80];
+    time_t now;
+    struct tm *present;
+    sockfd=socket(AF_INET,SOCK_STREAM,0);   
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=htonl(INADDR_ANY);
+    server.sin_port=htons(8080);
+    if(bind(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in binding\\n");
+        exit(1);
+    }
+    if(listen(sockfd,5)<0){
+        printf("Error in listening\\n");
+        exit(1);
+    }
+    while(1){
+        clilen=sizeof(client);
+        printf("Waiting for Clients: \\n");
+        newsockfd=accept(sockfd,(struct sockaddr *)&client,&clilen);
+        // memset(buffer,0,sizeof(buffer));
+        // read(newsockfd,buffer,80);
+        time(&now);
+        present=localtime(&now);
+        sprintf(buffer,"Time: %d-%d-%d %d:%d:%d\\n",present->tm_year+1900,present->tm_mon+1,present->tm_mday,present->tm_hour,present->tm_min,present->tm_sec);
+        write(newsockfd,buffer,sizeof(buffer));
+        close(newsockfd);
+    }
+}`
+        },
+        {
+            title: 'Q2: CLIENT - Date Time',
+            code: `// CLIENT CODE
+// Date Time Client
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<time.h>
+
+
+int main(){
+    int sockfd,n;
+    struct sockaddr_in server;
+    char a1[50];
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=inet_addr("127.0.0.1");
+    server.sin_port=htons(8080);
+    if(connect(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in connection\\n");
+        exit(1);
+    
+    }
+    // memset(a,0,sizeof(a));
+    // write(sockfd,a,sizeof(a));
+    n = read(sockfd,a1,sizeof(a1)-1);
+    a1[n] = '\\0';
+    printf("Client Recived: %s\\n",a1);
+    close(sockfd);
+}`
+        }
+    ],
+
+    'set6': [
+        {
+            title: 'Q1: tcpdump, nslookup',
+            code: `// tcpdump, nslookup
+
+/*
+1. tcpdump
+   - Function: Packet analyzer.
+   - Usage:
+     $ tcpdump -i eth0
+     $ tcpdump port 80
+
+2. nslookup
+   - Function: Query DNS.
+   - Usage:
+     $ nslookup example.com
+     $ nslookup -type=ns example.com
+*/`
+        },
+        {
+            title: 'Q2: CPT - End Systems Communication',
+            code: `// Using CPT to connect to end systems and establish communication between them.
+
+
+/*
+Steps to Connect End Systems and Establish Communication:
+
+1.  **Add Devices:**
+    *   Open Cisco Packet Tracer.
+    *   Drag two "End Devices" (e.g., PC-PT, Laptop-PT) into the workspace.
+    *   Drag a "Network Device" like a generic "Switch" (e.g., 2960).
+
+2.  **Connect Devices:**
+    *   Select the "Connections" (lightning bolt) tab.
+    *   Choose use a **Copper Straight-Through** cable (solid black line).
+    *   Connect PC0 (FastEthernet0) to the Switch (FastEthernet0/1).
+    *   Connect PC1 (FastEthernet0) to the Switch (FastEthernet0/2).
+
+3.  **Configure IP Addresses:**
+    *   Click on **PC0** -> **Desktop** tab -> **IP Configuration**.
+    *   Set **IP Address**: 192.168.1.1
+    *   Set **Subnet Mask**: 255.255.255.0
+    *   Click on **PC1** -> **Desktop** tab -> **IP Configuration**.
+    *   Set **IP Address**: 192.168.1.2
+    *   Set **Subnet Mask**: 255.255.255.0
+
+4.  **Verify Connectivity:**
+    *   Click on **PC0** -> **Desktop** tab -> **Command Prompt**.
+    *   Type: \`ping 192.168.1.2\`
+    *   You should see "Reply from 192.168.1.2..." indicating successful communication.
+*/`
+        }
+    ],
+
+    'set7': [
+        {
+            title: 'Q1: Traceroute, FTP',
+            code: `// Traceroute, FTP
+
+/*
+1. traceroute
+   - Function: Trace route to host.
+   - Usage:
+     $ traceroute 8.8.8.8
+
+2. FTP
+   - Function: Transfer files.
+   - Usage:
+     $ ftp host_address
+     > get filename
+     > put filename
+     > bye
+*/`
+        },
+        {
+            title: 'Q2: CPT - Router Configuration',
+            code: `// Using CPT to configure router to establish connection between two different networks.
+
+
+/*
+Steps to Configure Router for Two Different Networks:
+
+1.  **Setup Topology:**
+    *   Place 1 Router (e.g., 1841 or 1941) and 2 Switches (e.g., 2960).
+    *   Place 2 PCs (PC0, PC1) connected to Switch0.
+    *   Place 2 PCs (PC2, PC3) connected to Switch1.
+    *   Connect Switch0 to Router GigabitEthernet0/0.
+    *   Connect Switch1 to Router GigabitEthernet0/1.
+
+2.  **Assign IP Addresses: (Network 1: 192.168.1.0/24)**
+    *   **PC0:** IP: 192.168.1.2, Mask: 255.255.255.0, **Gateway: 192.168.1.1**
+    *   **PC1:** IP: 192.168.1.3, Mask: 255.255.255.0, **Gateway: 192.168.1.1**
+
+3.  **Assign IP Addresses: (Network 2: 192.168.2.0/24)**
+    *   **PC2:** IP: 192.168.2.2, Mask: 255.255.255.0, **Gateway: 192.168.2.1**
+    *   **PC3:** IP: 192.168.2.3, Mask: 255.255.255.0, **Gateway: 192.168.2.1**
+
+4.  **Configure Router Interfaces:**
+    *   Click Router -> **CLI** tab -> \`No\` to initial dialog.
+    *   **Configure Interface 0/0 (Gateway for Network 1):**
+        \`Router> enable\`
+        \`Router# configure terminal\`
+        \`Router(config)# interface gigabitEthernet 0/0\`
+        \`Router(config-if)# ip address 192.168.1.1 255.255.255.0\`
+        \`Router(config-if)# no shutdown\`
+        \`Router(config-if)# exit\`
+
+    *   **Configure Interface 0/1 (Gateway for Network 2):**
+        \`Router(config)# interface gigabitEthernet 0/1\`
+        \`Router(config-if)# ip address 192.168.2.1 255.255.255.0\`
+        \`Router(config-if)# no shutdown\`
+        \`Router(config-if)# end\`
+
+5.  **Verify Communication:**
+    *   From **PC0** (Network 1), open **Command Prompt**.
+    *   Ping PC2 (Network 2): \`ping 192.168.2.2\`
+    *   First request may timeout (ARP), subsequent replies signify success.
+*/`
+        }
+    ],
+
+    'set8': [
+        {
+            title: 'Q1: telnet, ping',
+            code: `// telnet, ping
+
+/*
+1. telnet
+   - Function: Remote login (unencrypted).
+   - Usage:
+     $ telnet host
+
+2. ping
+   - Function: Check connectivity.
+   - Usage:
+     $ ping host
+*/`
+        },
+        {
+            title: 'Q2: Capturing Traffic using Wireshark',
+            code: `// CAPTURING THE TRAFFIC using Wireshark
+
+
+/*
+Steps to Capture Traffic using Wireshark:
+
+1.  **Launch Wireshark:**
+    *   Open the Wireshark application on your system.
+
+2.  **Select Interface:**
+    *   On the welcome screen, identify the active network interface (e.g., Wi-Fi or Ethernet). It will usually show a small graph of activity.
+    *   Double-click the interface name to start capturing immediately.
+
+3.  **Filter (Optional but Recommended):**
+    *   To see specific traffic (like ICMP for ping), type \`icmp\` in the filter bar at the top and press Enter.
+
+4.  **Generate Traffic:**
+    *   Open a Command Prompt or Terminal.
+    *   Run a command like \`ping google.com\`.
+
+5.  **Analyze Packets:**
+    *   Look at the Wireshark window. You should see "Echo (ping) request" and "Echo (ping) reply" packets.
+    *   **Source:** The IP sending the packet.
+    *   **Destination:** The IP receiving the packet.
+    *   **Protocol:** ICMP (for ping).
+    *   **Info:** Details about the packet (e.g., sequence number).
+
+6.  **Stop Capture:**
+    *   Click the red square "Stop" button in the top toolbar when finished.
+*/`
+        }
+    ],
+
+    'set9': [
+        {
+            title: 'Q1: SERVER - Date Time',
+            code: `// SERVER CODE
+// Date Time Server
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<time.h>
+
+int main(){
+    int sockfd,newsockfd;
+    socklen_t clilen;
+    struct sockaddr_in server,client;
+    char buffer[80];
+    time_t now;
+    struct tm *present;
+    sockfd=socket(AF_INET,SOCK_STREAM,0);   
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=htonl(INADDR_ANY);
+    server.sin_port=htons(8080);
+    if(bind(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in binding\\n");
+        exit(1);
+    }
+    if(listen(sockfd,5)<0){
+        printf("Error in listening\\n");
+        exit(1);
+    }
+    while(1){
+        clilen=sizeof(client);
+        printf("Waiting for Clients: \\n");
+        newsockfd=accept(sockfd,(struct sockaddr *)&client,&clilen);
+        // memset(buffer,0,sizeof(buffer));
+        // read(newsockfd,buffer,80);
+        time(&now);
+        present=localtime(&now);
+        sprintf(buffer,"Time: %d-%d-%d %d:%d:%d\\n",present->tm_year+1900,present->tm_mon+1,present->tm_mday,present->tm_hour,present->tm_min,present->tm_sec);
+        write(newsockfd,buffer,sizeof(buffer));
+        close(newsockfd);
+    }
+}`
+        },
+        {
+            title: 'Q1: CLIENT - Date Time',
+            code: `// CLIENT CODE
+// Date Time Client
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<arpa/inet.h>
+#include<time.h>
+
+
+int main(){
+    int sockfd,n;
+    struct sockaddr_in server;
+    char a1[50];
+    sockfd=socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        printf("Error in socket creation\\n");
+
+        exit(1);
+    }
+    server.sin_family=AF_INET;
+    server.sin_addr.s_addr=inet_addr("127.0.0.1");
+    server.sin_port=htons(8080);
+    if(connect(sockfd,(struct sockaddr *)&server,sizeof(server))<0){
+        printf("Error in connection\\n");
+        exit(1);
+    
+    }
+    // memset(a,0,sizeof(a));
+    // write(sockfd,a,sizeof(a));
+    n = read(sockfd,a1,sizeof(a1)-1);
+    a1[n] = '\\0';
+    printf("Client Recived: %s\\n",a1);
+    close(sockfd);
+}`
+        },
+        {
+            title: 'Q2: Capturing Traffic using Wireshark',
+            code: `// CAPTURING THE TRAFFIC using Wireshark
+
+
+/*
+Steps to Capture Traffic (e.g., for TCP/HTTP or Port 8080):
+
+1.  **Start Date/Time Server:**
+    *   Run your C server program first (listening on port 8080).
+
+2.  **Start Wireshark:**
+    *   Open Wireshark and select your loopback interface (Adapter for loopback traffic capture) if running locally, or your main interface.
+    *   In the filter bar, type: \`tcp.port == 8080\` and press Enter. This ensures you only see traffic for your server.
+
+3.  **Start Capture:**
+    *   Double-click the interface to begin capturing.
+
+4.  **Run Client:**
+    *   Execute your client program to connect to the server.
+
+5.  **Observe Traffic:**
+    *   You should see:
+        *   **[SYN], [SYN, ACK], [ACK]:** The 3-way handshake establishing connection.
+        *   **[PSH, ACK]:** Data transfer packets (containing the time string).
+        *   **[FIN, ACK]:** Connection termination steps.
+
+6.  **Stop Capture:**
+    *   Click the red square "Stop" button.
+*/`
+        }
+    ],
+
+    'set10': [
+        {
+            title: 'Q1: Program to implement DNS',
+            code: `// Program to implement DNS
+#include<stdio.h>
+#include<netdb.h>
+#include<arpa/inet.h>
+#include<netinet/in.h>
+#include<stdlib.h>
+
+int main(int argc, char** argv)
+{
+    struct hostent *host;
+    struct in_addr h_addr;
+
+    if (argc != 2)
+    {
+        fprintf(stderr, "USAGE: nslookup <hostname>\\n");
+        exit(1); // Exit the program if the usage is incorrect
+    }
+
+    if ((host = gethostbyname(argv[1])) == NULL)
+    {
+        fprintf(stderr, "(mini)nslookup failed on %s\\n", argv[1]);
+        exit(1); // Exit the program if the lookup fails
+    }
+
+    h_addr.s_addr = *((unsigned long*)host->h_addr_list[0]);
+    printf("\\nIP ADDRESS = %s\\n", inet_ntoa(h_addr));
+    printf("HOST NAME = %s\\n", host->h_name);
+    printf("ADDRESS LENGTH = %d\\n", host->h_length);
+    printf("ADDRESS TYPE = %d\\n", host->h_addrtype);
+    return 0;
+}`
+        },
+        {
+            title: 'Q2: Filtering Traffic using Wireshark',
+            code: `// FILTERING TRAFFIC using Wireshark.
+
+
+/*
+Wireshark Filtering Commands & Usage:
+
+1.  **Protocol Filters:**
+    *   \`http\`: Displays only HTTP traffic.
+    *   \`tcp\`: Displays only TCP traffic.
+    *   \`udp\`: Displays only UDP traffic.
+    *   \`dns\`: Displays only DNS queries and responses.
+    *   \`icmp\`: Displays only ICMP (ping) traffic.
+
+2.  **IP Address Filters:**
+    *   \`ip.addr == 192.168.1.5\`: Shows traffic where source OR destination is this IP.
+    *   \`ip.src == 192.168.1.5\`: Shows traffic originating FROM this IP.
+    *   \`ip.dst == 192.168.1.5\`: Shows traffic sent TO this IP.
+
+3.  **Port Filters:**
+    *   \`tcp.port == 80\`: Shows TCP traffic on port 80.
+    *   \`udp.port == 53\`: Shows UDP traffic on port 53 (DNS).
+
+4.  **Logical Operators:**
+    *   \`and\` (or \` && \`): both conditions true. (e.g., \`http and ip.src == 192.168.1.5\`)
+    *   \`or\` (or \` || \`): either condition true.
+    *   \`not\` (or \`!\`): excludes condition. (e.g., \`not arp\`)
+
+5.  **How to Apply:**
+    *   Type the command into the "Apply a display filter" bar at the top.
+    *   If the bar turns **Green**, the syntax is correct.
+    *   Press Enter to apply.
+*/`
+        }
+    ],
+
+    'set11': [
+        {
+            title: 'Q1: Wireshark Statistics',
+            code: `// WIRESHARK STATISTICS.
+
+
+/*
+Overview of Wireshark Statistics Tools:
+
+1.  **Capture File Properties:**
+    *   Location: \`Statistics\` -> \`Capture File Properties\`.
+    *   Details: Shows general info like file name, size, hash, first/last packet time, and hardware interface used.
+
+2.  **Protocol Hierarchy:**
+    *   Location: \`Statistics\` -> \`Protocol Hierarchy\`.
+    *   Details: Tree view showing distribution of protocols (e.g., what % of traffic is TCP vs UDP). Helps identify top talkers or unusual protocol activity.
+
+3.  **Conversations:**
+    *   Location: \`Statistics\` -> \`Conversations\`.
+    *   Details: Lists traffic between two specific endpoints (IP A <-> IP B). Shows packet counts, byte counts, and duration for each conversation session.
+
+4.  **Endpoints:**
+    *   Location: \`Statistics\` -> \`Endpoints\`.
+    *   Details: Lists all unique devices (IP addresses or MAC addresses) found in the capture and their transmit/receive statistics.
+
+5.  **I/O Graphs:**
+    *   Location: \`Statistics\` -> \`I / O Graphs\`.
+    *   Details: Visualizes traffic over time. You can plot number of packets/bytes per second to see spikes or drops in network activity.
+
+6.  **Flow Graph:**
+    *   Location: \`Statistics\` -> \`Flow Graph\`.
+    *   Details: Visualizes the flow of packets between hosts (like a time-sequence diagram), useful for understanding TCP handshakes.
+*/`
+        },
+        {
+            title: 'Q2: Select Socket System Call',
+            code: `// Program to implement select socket system call.
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <fcntl.h>
+
+int main() {
+
+    int fd1, fd2, nfds;
+    fd_set readfds;
+    struct timeval timeout;
+
+    fd1 = open("file1.txt", O_RDONLY);
+    if (fd1 < 0) {
+        perror("open file1");
+        exit(EXIT_FAILURE);
+    }
+
+    fd2 = open("file2.txt", O_RDONLY);
+    if (fd2 < 0) {
+        perror("open file2");
+        close(fd1);
+        exit(EXIT_FAILURE);
+    }
+
+    FD_ZERO(&readfds);
+    FD_SET(fd1, &readfds);
+    FD_SET(fd2, &readfds);
+
+    nfds = (fd1 > fd2 ? fd1 : fd2) + 1;
+
+    timeout.tv_sec = 5;
+    timeout.tv_usec = 0;
+
+    int ret = select(nfds, &readfds, NULL, NULL, &timeout);
+
+    if (ret == -1) {
+        perror("select");
+        close(fd1);
+        close(fd2);
+        exit(EXIT_FAILURE);
+    } else if (ret == 0) {
+        printf("Timeout occurred! No file descriptor is ready.\\n");
+    } else {
+        if (FD_ISSET(fd1, &readfds)) {
+            printf("File descriptor %d is ready to read.\\n", fd1);
+        }
+        if (FD_ISSET(fd2, &readfds)) {
+            printf("File descriptor %d is ready to read.\\n", fd2);
+        }
+    }
+
+    close(fd1);
+    close(fd2);
+
+    return 0;
+}`
+        }
+    ]
 };

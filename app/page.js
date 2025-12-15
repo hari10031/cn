@@ -14,7 +14,7 @@ export default function Home() {
 
     const handlePasscodeSubmit = (e) => {
         e.preventDefault();
-        if (passcode === '54') {
+        if (passcode === '2203') {
             setIsAuthenticated(true);
             setError(false);
         } else {
@@ -29,10 +29,10 @@ export default function Home() {
         setCopied(false);
     };
 
-    const copyToClipboard = async (text) => {
+    const copyToClipboard = async (text, index = null) => {
         try {
             await navigator.clipboard.writeText(text);
-            setCopied(true);
+            setCopied(index !== null ? index : true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
@@ -134,22 +134,39 @@ export default function Home() {
                                 <span className={styles.questionLabel}>{currentAlgorithm.fullName}</span>
                             </div>
 
-                            <div className={styles.codeContainer}>
-                                <button
-                                    onClick={() => copyToClipboard(currentCode)}
-                                    className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
-                                >
-                                    <svg className={styles.copyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {copied ? (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        ) : (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        )}
-                                    </svg>
-                                    {copied ? 'Copied!' : 'Copy Code'}
-                                </button>
-                                <pre className={styles.codeBlock}><code>{currentCode}</code></pre>
-                            </div>
+                            {Array.isArray(currentCode) ? (
+                                currentCode.map((part, index) => (
+                                    <div key={index} className={styles.codeBlockContainer}>
+                                        <div className={styles.codeBlockHeader}>
+                                            <span className={styles.codeBlockTitle}>{part.title}</span>
+                                            <button
+                                                onClick={() => copyToClipboard(part.code)}
+                                                className={`${styles.copyButton} ${styles.smallCopyButton} ${copied === index ? styles.copied : ''}`}
+                                            >
+                                                {copied === index ? 'Copied!' : 'Copy'}
+                                            </button>
+                                        </div>
+                                        <pre className={styles.codeBlock}><code>{part.code}</code></pre>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className={styles.codeContainer}>
+                                    <button
+                                        onClick={() => copyToClipboard(currentCode)}
+                                        className={`${styles.copyButton} ${copied === true ? styles.copied : ''}`}
+                                    >
+                                        <svg className={styles.copyIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            {copied === true ? (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                            ) : (
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            )}
+                                        </svg>
+                                        {copied === true ? 'Copied!' : 'Copy Code'}
+                                    </button>
+                                    <pre className={styles.codeBlock}><code>{currentCode}</code></pre>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (
