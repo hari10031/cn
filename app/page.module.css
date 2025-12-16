@@ -96,8 +96,8 @@
 }
 
 .algorithmGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
@@ -114,7 +114,8 @@
     font-family: inherit;
     position: relative;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: normal;
+    text-align: left;
 }
 
 .algorithmButton::before {
