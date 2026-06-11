@@ -1,15 +1,110 @@
 export const algorithmsData = [
-  { id: 'q1', name: '1. Write a program to make a parent process wait for child process.', fullName: 'Write a program to make a parent process wait for child process.' },
-  { id: 'q2', name: '2. Write a program to create a zombie process', fullName: 'Write a program to create a zombie process' },
-  { id: 'q3', name: '3. Write a program to create a child process different from parent process', fullName: 'Write a program to create a child process different from parent process' },
-  { id: 'q4', name: '4. Write a program to illustrate creation of thread using posix threads', fullName: 'Write a program to illustrate creation of thread using posix threads' },
-  { id: 'q5', name: '5. Write a program to make the main process to wait for the child process to complete', fullName: 'Write a program to make the main process to wait for the child process to complete' },
-  { id: 'q6', name: '6. Write a program to illustrate sharing of variables between thread and main process', fullName: 'Write a program to illustrate sharing of variables between thread and main process' },
-  { id: 'q7', name: '7. Write a program to illustrate how a single function can handle more than one process', fullName: 'Write a program to illustrate how a single function can handle more than one process' },
-  { id: 'q8', name: '8. Write a program to schedule the process using the FCFS algorithm', fullName: 'Write a program to schedule the process using the FCFS algorithm' },
-  { id: 'q9', name: '9. Write a program to schedule the process using the SJF algorithm', fullName: 'Write a program to schedule the process using the SJF algorithm' },
-  { id: 'q10', name: '10. Write a program to schedule the process using the Round Roubin algorithm', fullName: 'Write a program to schedule the process using the Round Roubin algorithm' },
-  { id: 'q11', name: '11. Write a program to demonstrate a solution for dining philosopher problem', fullName: 'Write a program to demonstrate a solution for dining philosopher problem' },
-  { id: 'q12', name: '12. Write a program to demonstrate a solution for Producer Consumer problem', fullName: 'Write a program to demonstrate a solution for Producer Consumer problem' },
-  { id: 'q13', name: '13. Write a program to demonstrate a solution for Readers Writers problem', fullName: 'Write a program to demonstrate a solution for Readers Writers problem' }
+  {
+    id: 'set2',
+    name: 'Set 2',
+    description: 'Naïve Bayes & KNN Regression',
+    parts: [
+      {
+        id: '2a',
+        title: '(a) Naïve Bayes Classification',
+        fullName: '2. (a) Implement Naïve Bayes Classification using the Iris dataset and predict the class of a new instance.',
+        description: 'Naïve Bayes classifiers are a family of simple probabilistic classifiers based on applying Bayes\' theorem with strong (naïve) independence assumptions between features.'
+      },
+      {
+        id: '2b',
+        title: '(b) KNN Regression',
+        fullName: '2. (b) Implement K-Nearest Neighbors (KNN) Regression using the Diabetes dataset and predict the target value of a new instance.',
+        description: 'K-Nearest Neighbors (KNN) regression is a non-parametric method that predicts the target value of a new instance by averaging the values of its K nearest neighbors in the feature space.'
+      }
+    ]
+  },
+  {
+    id: 'set3',
+    name: 'Set 3',
+    description: 'Multiclass Logistic & SVM Regression',
+    parts: [
+      {
+        id: '3a',
+        title: '(a) Multiclass Logistic Regression',
+        fullName: '3. (a) Implement Multiclass Logistic Regression using the Iris dataset and predict the class of a new instance.',
+        description: 'Multiclass Logistic Regression (or Multinomial Logistic Regression) generalizes logistic regression to multiclass classification problems. It uses a Softmax function or one-vs-rest strategies to classify instances.'
+      },
+      {
+        id: '3b',
+        title: '(b) SVM Regression',
+        fullName: '3. (b) Implement Support Vector Machine (SVM) Regression using the Diabetes dataset and predict the target value of a new instance.',
+        description: 'Support Vector Regression (SVR) applies SVM principles to regression problems, finding a hyperplane that fits the data within a specified margin of tolerance (epsilon).'
+      }
+    ]
+  },
+  {
+    id: 'set4',
+    name: 'Set 4',
+    description: 'Decision Tree & K-Means Clustering',
+    parts: [
+      {
+        id: '4a',
+        title: '(a) Decision Tree Classification',
+        fullName: '4. (a) Implement Decision Tree Classification using the Iris dataset and predict the class of a new instance.',
+        description: 'A Decision Tree is a non-parametric supervised learning method. It creates a model that predicts the value of a target variable by learning simple decision rules inferred from the data features.'
+      },
+      {
+        id: '4b',
+        title: '(b) K-Means Clustering',
+        fullName: '4. (b) Implement K-Means Clustering and visualize the clusters.',
+        description: 'K-Means clustering is an unsupervised learning algorithm that partitions N observations into K clusters, in which each observation belongs to the cluster with the nearest mean (centroid).'
+      }
+    ]
+  },
+  {
+    id: 'set5',
+    name: 'Set 5',
+    description: 'KNN Classification & Hierarchical Clustering',
+    parts: [
+      {
+        id: '5a',
+        title: '(a) KNN Classification',
+        fullName: '5. (a) Implement K-Nearest Neighbors (KNN) Classification using the Iris dataset and predict the class of a new instance.',
+        description: 'KNN classification is a supervised classifier that assigns a class label to a query point based on the majority vote of its K closest neighbors in the training dataset. This section includes both manual implementation (from scratch) and Scikit-learn methods.'
+      },
+      {
+        id: '5b',
+        title: '(b) Agglomerative Hierarchical Clustering',
+        fullName: '5. (b) Implement Agglomerative Hierarchical Clustering and visualize the clusters.',
+        description: 'Agglomerative clustering is a bottom-up hierarchical clustering method. It starts with each data point in its own cluster and iteratively merges the closest pairs of clusters based on a linkage criterion.'
+      }
+    ]
+  },
+  {
+    id: 'set6',
+    name: 'Set 6',
+    description: 'SVM Classification & GMM Clustering',
+    parts: [
+      {
+        id: '6a',
+        title: '(a) SVM Classification',
+        fullName: '6. (a) Implement Support Vector Machine (SVM) Classification using the Iris dataset and predict the class of a new instance.',
+        description: 'Support Vector Machine (SVM) is a powerful supervised algorithm. It finds the optimal decision boundary (hyperplane) that maximizes the margin between classes.'
+      },
+      {
+        id: '6b',
+        title: '(b) GMM Clustering',
+        fullName: '6. (b) Implement Gaussian Mixture Model (GMM) clustering using the Expectation Maximization (EM) algorithm and visualize the clusters.',
+        description: 'Gaussian Mixture Models (GMM) are probabilistic models that assume all data points are generated from a mixture of a finite number of Gaussian distributions with unknown parameters.'
+      }
+    ]
+  },
+  {
+    id: 'set8',
+    name: 'Set 8',
+    description: 'Model Evaluation Measures',
+    parts: [
+      {
+        id: '8a',
+        title: 'Classification Performance Evaluation',
+        fullName: '8. Evaluate various classification algorithms performance on a dataset using measures such as True positive rate, False positive rate, F-score, Accuracy etc.',
+        description: 'Performance evaluation metrics analyze classification models. Metrics include True Positive Rate (TPR/Sensitivity), False Positive Rate (FPR), Precision, F1-Score, and Accuracy, computed using a Confusion Matrix.'
+      }
+    ]
+  }
 ];
