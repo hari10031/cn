@@ -1,14 +1,103 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 import { algorithmsData } from '../data/questions';
 import { answersData } from '../data/answers';
 
+const LOG_MESSAGES = [
+    { p: 0, text: "[SYS_INIT] Initializing system security audit shell..." },
+    { p: 5, text: "[SYS_INIT] Establishing secure socket on virtual node 127.0.0.19..." },
+    { p: 10, text: "[WARN] Directory protection triggers bypassed..." },
+    { p: 15, text: "[INFO] Launching decryption brute-force simulation..." },
+    { p: 22, text: "[INFO] SHA-256 decryption key rotation in progress..." },
+    { p: 30, text: "[ALERT] Intrusion signature detected by host firewall..." },
+    { p: 38, text: "[WARN] Port scanning response delayed. Forcing parallel channels..." },
+    { p: 45, text: "[INFO] Checking user credentials against system registry..." },
+    { p: 52, text: "[ERROR] Decryption mismatch detected in passcode buffer block 2..." },
+    { p: 60, text: "[INFO] Forcing override sequence command stream..." },
+    { p: 68, text: "[CRITICAL] TRAP SIG: 'CHADUVUKONDI FIRST U' ENCOUNTERED" },
+    { p: 76, text: "[ALERT] Running payload dump of localized memory..." },
+    { p: 84, text: "[CRITICAL] MEME DETECTED. PREVENTING FURTHER SITE ACCESS" },
+    { p: 92, text: "[FATAL] DECRYPTION FAILED. SYSTEM SECURITY TAMPER INHIBITOR ARMED" },
+    { p: 100, text: "[FATAL] ACCESS DENIED. INTRUDER BLOCK INITIATED" }
+];
+
+function MatrixRain({ color = '#10b981', opacity = 0.12 }) {
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const handleResize = () => {
+            if (canvas) {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+        };
+        window.addEventListener('resize', handleResize);
+
+        const alphabet = "0101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ🤖💻🔥⚠️🚫👾";
+        const fontSize = 14;
+        const columns = Math.floor(width / fontSize);
+
+        const rainDrops = Array(columns).fill(1);
+
+        const draw = () => {
+            ctx.fillStyle = color === '#10b981' ? 'rgba(7, 10, 18, 0.08)' : 'rgba(10, 2, 2, 0.08)';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.fillStyle = color;
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+
+        const interval = setInterval(draw, 33);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [color]);
+
+    return (
+        <canvas 
+            ref={canvasRef} 
+            style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '100%', 
+                height: '100%', 
+                opacity: opacity, 
+                pointerEvents: 'none', 
+                zIndex: 1 
+            }} 
+        />
+    );
+}
+
 export default function Home() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [passcode, setPasscode] = useState('');
-    const [error, setError] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const [showTryAgain, setShowTryAgain] = useState(false);
+    const [lockMessage, setLockMessage] = useState('');
+    const [lockStatusClass, setLockStatusClass] = useState('');
+    const [progressPercent, setProgressPercent] = useState(0);
     const [selectedSetId, setSelectedSetId] = useState('set1');
     const [selectedPartIndex, setSelectedPartIndex] = useState(0);
     const [copied, setCopied] = useState(false);
@@ -18,13 +107,54 @@ export default function Home() {
 
     const handlePasscodeSubmit = (e) => {
         e.preventDefault();
+        if (isVerifying) return;
+
         if (passcode === '2203') {
             setIsAuthenticated(true);
-            setError(false);
+            setLockMessage('');
+            setLockStatusClass('');
+            setShowTryAgain(false);
         } else {
-            setError(true);
+            setIsVerifying(true);
+            setShowTryAgain(false);
             setPasscode('');
-            setTimeout(() => setError(false), 2000);
+            setProgressPercent(0);
+            
+            // Progress Bar interval incrementing to 100% over 5 seconds
+            const interval = setInterval(() => {
+                setProgressPercent(prev => {
+                    if (prev >= 100) {
+                        clearInterval(interval);
+                        return 100;
+                    }
+                    return prev + 1;
+                });
+            }, 50);
+            
+            setLockMessage('🔄 Unlocking the content...');
+            setLockStatusClass(styles.lockStatusUnlocking);
+            
+            setTimeout(() => {
+                setLockMessage('⏳ Hold On...');
+                setLockStatusClass(styles.lockStatusHold);
+            }, 1200);
+            
+            setTimeout(() => {
+                setLockMessage('🤔 Wait a Minute...');
+                setLockStatusClass(styles.lockStatusWait);
+            }, 2400);
+            
+            setTimeout(() => {
+                setLockMessage('📖 chaduvukora First U endira ee panulu');
+                setLockStatusClass(styles.lockStatusMeme);
+            }, 3600);
+            
+            setTimeout(() => {
+                setLockMessage('❌ Wrong Password Contact Owner');
+                setLockStatusClass(styles.lockStatusError);
+                setIsVerifying(false);
+                setShowTryAgain(true);
+            }, 5000);
         }
     };
 
@@ -225,8 +355,106 @@ export default function Home() {
     const rawFilename = `${currentPart.id}_${currentPart.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
     const filename = `${rawFilename}.ipynb`;
 
-    // Passcode Lock Screen
+    // Passcode Lock Screen Takeover Layout
     if (!isAuthenticated) {
+        if (isVerifying) {
+            return (
+                <div className={styles.hackerTakeoverScreen}>
+                    <MatrixRain color="#10b981" opacity={0.12} />
+                    <div className={styles.scannerGlow}></div>
+                    <div className={styles.terminalWindow}>
+                        <div className={styles.terminalHeader}>
+                            <span className={styles.dot} style={{ backgroundColor: '#ef4444' }}></span>
+                            <span className={styles.dot} style={{ backgroundColor: '#fbbf24' }}></span>
+                            <span className={styles.dot} style={{ backgroundColor: '#10b981' }}></span>
+                            <span className={styles.terminalTitle}>SECURE_PORTAL_SCANNER.exe</span>
+                        </div>
+                        <div className={styles.terminalBody}>
+                            <div className={styles.scanLine}></div>
+                            <div className={`${styles.glitchTakeoverText} ${lockStatusClass}`} data-text={lockMessage}>
+                                {lockMessage}
+                            </div>
+                            <div className={styles.progressContainer}>
+                                <div 
+                                    className={styles.progressBar} 
+                                    style={{ width: `${progressPercent}%` }} 
+                                />
+                                <div className={styles.progressText}>
+                                    SCANNING_HASH_STREAM... {progressPercent}%
+                                </div>
+                            </div>
+                            <div className={styles.terminalLogs}>
+                                {LOG_MESSAGES.filter(log => progressPercent >= log.p).map((log, index) => (
+                                    <div 
+                                        key={index} 
+                                        style={{ 
+                                            color: log.text.includes('FATAL') || log.text.includes('CRITICAL') 
+                                                ? '#ef4444' 
+                                                : log.text.includes('WARN') || log.text.includes('ALERT') 
+                                                    ? '#fbbf24' 
+                                                    : '#10b981' 
+                                        }}
+                                    >
+                                        {log.text}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        if (showTryAgain) {
+            return (
+                <div className={styles.accessDeniedTakeoverScreen}>
+                    <MatrixRain color="#ef4444" opacity={0.12} />
+                    <div className={styles.scannerGlowRed}></div>
+                    <div className={styles.terminalWindowRed}>
+                        <div className={styles.terminalHeaderRed}>
+                            <span className={styles.dotRed} style={{ backgroundColor: '#ef4444' }}></span>
+                            <span className={styles.dotRed} style={{ backgroundColor: '#fbbf24' }}></span>
+                            <span className={styles.dotRed} style={{ backgroundColor: '#10b981' }}></span>
+                            <span className={styles.terminalTitleRed}>ACCESS_DENIED.err</span>
+                        </div>
+                        <div className={styles.terminalBody}>
+                            <div className={styles.scanLineRed}></div>
+                            <div className={styles.vibratingIcon}>🚫</div>
+                            <h2 className={styles.glitchTakeoverTextRed} data-text="SYSTEM LOCKOUT">
+                                SYSTEM LOCKOUT
+                            </h2>
+                            <p 
+                                className={`${styles.lockStatusMessage} ${styles.lockStatusError}`}
+                                data-text={lockMessage}
+                                style={{ width: '100%', maxWidth: '550px', margin: '1.25rem auto' }}
+                            >
+                                {lockMessage}
+                            </p>
+                            
+                            <div className={styles.terminalLogsRed}>
+                                <div>[SYS_FATAL] INVALID AUTHORIZATION CODE RECEIVED.</div>
+                                <div>[SYS_FATAL] SHIELD PROTECTION LOGGED THREAT SIGNATURE: "INTRUDER".</div>
+                                <div>[SYS_FATAL] TARGET IP RECORDED & BACKUP SECURITY SCHEMAS EXECUTED.</div>
+                                <div style={{ color: '#ef4444', fontWeight: 'bold' }}>[SYS_FATAL] ACCESS REVOKED. CONTACT SYSTEM OWNER IMMEDIATELY.</div>
+                            </div>
+
+                            <button 
+                                onClick={() => {
+                                    setShowTryAgain(false);
+                                    setLockMessage('');
+                                    setLockStatusClass('');
+                                    setPasscode('');
+                                }} 
+                                className={styles.lockButtonRed}
+                            >
+                                🔄 Try Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className={styles.container}>
                 <div className={styles.backgroundDecoration}>
@@ -249,17 +477,13 @@ export default function Home() {
                                 value={passcode}
                                 onChange={(e) => setPasscode(e.target.value)}
                                 placeholder="••••"
-                                className={`${styles.lockInput} ${error ? styles.lockInputError : ''}`}
+                                className={styles.lockInput}
                                 autoFocus
                             />
                             <button type="submit" className={styles.lockButton}>
                                 Unlock Portal
                             </button>
                         </form>
-
-                        {error && (
-                            <p className={styles.lockError}>❌ Invalid Passcode</p>
-                        )}
                     </div>
                 </div>
 
