@@ -14,6 +14,7 @@ export default function Home() {
     const [copied, setCopied] = useState(false);
     const [activeSubTab, setActiveSubTab] = useState(0); // For parts with multiple implementations
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handlePasscodeSubmit = (e) => {
         e.preventDefault();
@@ -32,6 +33,7 @@ export default function Home() {
         setSelectedPartIndex(0);
         setActiveSubTab(0);
         setCopied(false);
+        setIsSidebarOpen(false); // Close sidebar drawer on set click (mobile)
     };
 
     const handlePartSelect = (index) => {
@@ -282,14 +284,31 @@ export default function Home() {
             </div>
 
             <div className={styles.mainWrapper}>
+                {/* Backdrop overlay for Mobile Drawer */}
+                {isSidebarOpen && (
+                    <div 
+                        className={styles.sidebarOverlay} 
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
+
                 {/* Sidebar Navigation */}
-                <aside className={styles.sidebar}>
+                <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
                     <div className={styles.sidebarHeader}>
-                        <span className={styles.sidebarLogo}>🤖</span>
-                        <div style={{ textAlign: 'left' }}>
-                            <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff' }}>AIML Lab Portal</div>
-                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Regulation R21 - VI Sem</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <span className={styles.sidebarLogo}>🤖</span>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff' }}>AIML Lab Portal</div>
+                                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Regulation R21 - VI Sem</div>
+                            </div>
                         </div>
+                        {/* Close button for Mobile */}
+                        <button 
+                            onClick={() => setIsSidebarOpen(false)}
+                            className={styles.closeSidebarButton}
+                        >
+                            ✕
+                        </button>
                     </div>
 
                     {/* PDF Compile Button */}
@@ -355,9 +374,18 @@ export default function Home() {
                 {/* Dashboard Area */}
                 <main className={styles.dashboard}>
                     <header className={styles.dashboardHeader}>
-                        <div style={{ textAlign: 'left' }}>
-                            <h1 className={styles.dashboardTitle}>{currentSet.name}</h1>
-                            <p className={styles.dashboardSubtitle}>{currentSet.description}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            {/* Hamburger Menu Toggle Button on Mobile */}
+                            <button 
+                                onClick={() => setIsSidebarOpen(true)}
+                                className={styles.menuButton}
+                            >
+                                ☰
+                            </button>
+                            <div style={{ textAlign: 'left' }}>
+                                <h1 className={styles.dashboardTitle}>{currentSet.name}</h1>
+                                <p className={styles.dashboardSubtitle}>{currentSet.description}</p>
+                            </div>
                         </div>
                         <div className={styles.badge}>R21 Syllabus</div>
                     </header>
