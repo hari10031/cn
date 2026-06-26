@@ -5,19 +5,15 @@ import styles from './page.module.css';
 import { algorithmsData } from '../data/questions';
 import { answersData } from '../data/answers';
 
-// Import visualizers
-import KMeansVisualizer from '../components/KMeansVisualizer';
-import KnnVisualizer from '../components/KnnVisualizer';
-import MetricsCalculator from '../components/MetricsCalculator';
-
 export default function Home() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [passcode, setPasscode] = useState('');
     const [error, setError] = useState(false);
-    const [selectedSetId, setSelectedSetId] = useState('set2');
+    const [selectedSetId, setSelectedSetId] = useState('set1');
     const [selectedPartIndex, setSelectedPartIndex] = useState(0);
     const [copied, setCopied] = useState(false);
-    const [activeSubTab, setActiveSubTab] = useState(0); // For parts with multiple implementations (e.g. 5a)
+    const [activeSubTab, setActiveSubTab] = useState(0); // For parts with multiple implementations
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
     const handlePasscodeSubmit = (e) => {
         e.preventDefault();
@@ -94,6 +90,111 @@ export default function Home() {
         document.body.removeChild(element);
     };
 
+    // Direct PDF Generation and Download (no colorful borders, compact flow, no outputs)
+    const handlePrintAll = () => {
+        if (isGeneratingPdf) return;
+        setIsGeneratingPdf(true);
+
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        
+        script.onload = () => {
+            const opt = {
+                margin:       [12, 12, 12, 12], // Margins to maximize page space usage
+                filename:     'AIML_Lab_Manual.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            const element = document.createElement('div');
+            
+            const escapeHtml = (text) => {
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            };
+
+            let htmlContent = `
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 5px; color: #000000; background-color: #ffffff; line-height: 1.4; font-size: 12px;">
+                    <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000000; padding-bottom: 10px;">
+                        <h1 style="margin: 0; color: #000000; font-size: 20px; font-weight: bold;">Artificial Intelligence & Machine Learning</h1>
+                        <h2 style="margin: 3px 0 0 0; color: #000000; font-size: 14px; font-weight: bold;">Lab Manual</h2>
+                        <div style="margin: 3px 0 0 0; color: #475569; font-size: 10px; font-weight: 500;">Regulation R21 - VI Semester</div>
+                    </div>
+            `;
+
+            algorithmsData.forEach((set) => {
+                htmlContent += `
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 14px; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 3px; margin-bottom: 10px; font-weight: bold;">
+                            ${set.name}: ${set.description}
+                        </div>
+                `;
+                
+                set.parts.forEach(part => {
+                    htmlContent += `
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size: 11px; color: #000000; font-weight: bold; margin-bottom: 3px;">
+                                ${part.fullName}
+                            </div>
+                            <div style="font-size: 10px; color: #475569; margin-bottom: 6px; background-color: #f8fafc; padding: 5px 8px; border-left: 2px solid #475569; border-radius: 2px;">
+                                ${part.description}
+                            </div>
+                    `;
+                    
+                    const answer = answersData[part.id];
+                    if (answer) {
+                        if (Array.isArray(answer)) {
+                            answer.forEach(sub => {
+                                htmlContent += `
+                                    <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 5px; margin-bottom: 3px; font-weight: bold;">
+                                        Code: ${sub.title}
+                                    </div>
+                                    <pre style="background-color: #f8fafc; color: #000000; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 8px; font-family: monospace; font-size: 9.5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; margin: 0 0 6px 0; line-height: 1.25;">${escapeHtml(sub.code)}</pre>
+                                `;
+                            });
+                        } else {
+                            htmlContent += `
+                                <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 5px; margin-bottom: 3px; font-weight: bold;">
+                                    Code Implementation
+                                </div>
+                                <pre style="background-color: #f8fafc; color: #000000; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 8px; font-family: monospace; font-size: 9.5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; margin: 0; line-height: 1.25;">${escapeHtml(answer.code)}</pre>
+                            `;
+                        }
+                    }
+                    htmlContent += `</div>`;
+                });
+                
+                htmlContent += `</div>`;
+            });
+
+            htmlContent += `</div>`;
+            element.innerHTML = htmlContent;
+            
+            // Generate and save the PDF directly to download
+            window.html2pdf().from(element).set(opt).save().then(() => {
+                setIsGeneratingPdf(false);
+                document.body.removeChild(script);
+            }).catch(err => {
+                console.error("PDF generation error:", err);
+                setIsGeneratingPdf(false);
+                document.body.removeChild(script);
+            });
+        };
+
+        script.onerror = () => {
+            console.error("Failed to load html2pdf script from CDN");
+            setIsGeneratingPdf(false);
+            alert("Failed to load PDF library. Please check your internet connection.");
+        };
+
+        document.body.appendChild(script);
+    };
+
     // Find current active set and part
     const currentSet = algorithmsData.find(s => s.id === selectedSetId) || algorithmsData[0];
     const currentPart = currentSet.parts[selectedPartIndex] || currentSet.parts[0];
@@ -121,20 +222,6 @@ export default function Home() {
     // Determine filename for download
     const rawFilename = `${currentPart.id}_${currentPart.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
     const filename = `${rawFilename}.ipynb`;
-
-    // Render corresponding Visualizer component
-    const renderVisualizer = (id) => {
-        switch (id) {
-            case '4b':
-                return <KMeansVisualizer />;
-            case '5a':
-                return <KnnVisualizer />;
-            case '8a':
-                return <MetricsCalculator />;
-            default:
-                return null;
-        }
-    };
 
     // Passcode Lock Screen
     if (!isAuthenticated) {
@@ -205,6 +292,48 @@ export default function Home() {
                         </div>
                     </div>
 
+                    {/* PDF Compile Button */}
+                    <div style={{ padding: '1rem 0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <button 
+                            onClick={handlePrintAll} 
+                            disabled={isGeneratingPdf}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                border: 'none',
+                                borderRadius: '10px',
+                                background: isGeneratingPdf 
+                                    ? '#334155' 
+                                    : 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                                color: isGeneratingPdf ? '#94a3b8' : 'white',
+                                fontSize: '0.85rem',
+                                fontWeight: '700',
+                                cursor: isGeneratingPdf ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '0.5rem',
+                                boxShadow: isGeneratingPdf ? 'none' : '0 4px 12px rgba(99, 102, 241, 0.3)',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                                if (!isGeneratingPdf) {
+                                    e.currentTarget.style.transform = 'translateY(-1px)';
+                                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(99, 102, 241, 0.5)';
+                                }
+                            }}
+                            onMouseOut={(e) => {
+                                if (!isGeneratingPdf) {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                                }
+                            }}
+                        >
+                            <span>📄</span>
+                            <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download All Q&A (PDF)'}</span>
+                        </button>
+                    </div>
+
                     <nav className={styles.setNav}>
                         <div className={styles.navSectionTitle}>Lab Sets</div>
                         {algorithmsData.map((set) => (
@@ -253,9 +382,6 @@ export default function Home() {
                         <div className={styles.questionCard}>
                             <h3 className={styles.partHeader}>{currentPart.fullName}</h3>
                             <p className={styles.partDescription}>{currentPart.description}</p>
-
-                            {/* Dynamic Simulation / visualizer */}
-                            {renderVisualizer(currentPart.id)}
 
                             {/* Implementation details */}
                             <div className={styles.implementationHeader}>
