@@ -4,8 +4,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-    title: 'Question Answer Portal - Sets 1-15',
-    description: 'Interactive portal for managing and answering programming questions across 15 different sets',
+    title: 'AIML Lab Portal - 4 Core Questions & Solutions',
+    description: 'Implementation of Perceptron, ANN Sequential, and CNN models with expected outputs and plot diagrams',
 };
 
 export default function RootLayout({ children }) {

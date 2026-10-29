@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
-import { algorithmsData } from '../data/questions';
+import { questionsData } from '../data/questions';
 import { answersData } from '../data/answers';
+import MatplotlibPlot from '../components/MatplotlibPlot';
 
 const LOG_MESSAGES = [
     { p: 0, text: "[SYS_INIT] Initializing system security audit shell..." },
@@ -98,10 +99,8 @@ export default function Home() {
     const [lockMessage, setLockMessage] = useState('');
     const [lockStatusClass, setLockStatusClass] = useState('');
     const [progressPercent, setProgressPercent] = useState(0);
-    const [selectedSetId, setSelectedSetId] = useState('set1');
-    const [selectedPartIndex, setSelectedPartIndex] = useState(0);
+    const [selectedQuestionId, setSelectedQuestionId] = useState('q1');
     const [copied, setCopied] = useState(false);
-    const [activeSubTab, setActiveSubTab] = useState(0); // For parts with multiple implementations
     const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -158,18 +157,10 @@ export default function Home() {
         }
     };
 
-    const handleSetSelect = (setId) => {
-        setSelectedSetId(setId);
-        setSelectedPartIndex(0);
-        setActiveSubTab(0);
+    const handleQuestionSelect = (qId) => {
+        setSelectedQuestionId(qId);
         setCopied(false);
-        setIsSidebarOpen(false); // Close sidebar drawer on set click (mobile)
-    };
-
-    const handlePartSelect = (index) => {
-        setSelectedPartIndex(index);
-        setActiveSubTab(0);
-        setCopied(false);
+        setIsSidebarOpen(false); // Close sidebar drawer on mobile
     };
 
     const copyToClipboard = async (text, label) => {
@@ -222,7 +213,7 @@ export default function Home() {
         document.body.removeChild(element);
     };
 
-    // Direct PDF Generation and Download (no colorful borders, compact flow, no outputs)
+    // Direct PDF Generation and Download for all 4 Lab Questions
     const handlePrintAll = () => {
         if (isGeneratingPdf) return;
         setIsGeneratingPdf(true);
@@ -232,8 +223,8 @@ export default function Home() {
         
         script.onload = () => {
             const opt = {
-                margin:       [12, 12, 12, 12], // Margins to maximize page space usage
-                filename:     'AIML_Lab_Manual.pdf',
+                margin:       [10, 10, 10, 10],
+                filename:     'AIML_Lab_4_Questions_Manual.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -242,6 +233,7 @@ export default function Home() {
             const element = document.createElement('div');
             
             const escapeHtml = (text) => {
+                if (!text) return '';
                 return text
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
@@ -251,55 +243,39 @@ export default function Home() {
             };
 
             let htmlContent = `
-                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 5px; color: #000000; background-color: #ffffff; line-height: 1.4; font-size: 12px;">
+                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 6px; color: #000000; background-color: #ffffff; line-height: 1.4; font-size: 11px;">
                     <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000000; padding-bottom: 10px;">
-                        <h1 style="margin: 0; color: #000000; font-size: 20px; font-weight: bold;">Artificial Intelligence & Machine Learning</h1>
-                        <h2 style="margin: 3px 0 0 0; color: #000000; font-size: 14px; font-weight: bold;">Lab Manual</h2>
-                        <div style="margin: 3px 0 0 0; color: #475569; font-size: 10px; font-weight: 500;">Regulation R21 - VI Semester</div>
+                        <h1 style="margin: 0; color: #000000; font-size: 19px; font-weight: bold;">Artificial Intelligence & Machine Learning</h1>
+                        <h2 style="margin: 4px 0 0 0; color: #1e293b; font-size: 14px; font-weight: bold;">Lab Manual - 4 Core Experiments & Solutions</h2>
+                        <div style="margin: 3px 0 0 0; color: #475569; font-size: 10px; font-weight: 500;">Perceptron | Artificial Neural Networks | Convolutional Neural Networks</div>
                     </div>
             `;
 
-            algorithmsData.forEach((set) => {
+            questionsData.forEach((q) => {
+                const answer = answersData[q.id];
                 htmlContent += `
-                    <div style="margin-bottom: 20px;">
-                        <div style="font-size: 14px; color: #000000; border-bottom: 1px solid #000000; padding-bottom: 3px; margin-bottom: 10px; font-weight: bold;">
-                            ${set.name}: ${set.description}
+                    <div style="margin-bottom: 22px; page-break-inside: avoid;">
+                        <div style="font-size: 13px; color: #0f172a; border-bottom: 1.5px solid #0f172a; padding-bottom: 4px; margin-bottom: 6px; font-weight: bold;">
+                            ${escapeHtml(q.fullName)}
+                        </div>
+                        <div style="font-size: 10px; color: #334155; margin-bottom: 8px; background-color: #f1f5f9; padding: 6px 10px; border-left: 3px solid #3b82f6; border-radius: 2px;">
+                            ${escapeHtml(q.description)}
                         </div>
                 `;
                 
-                set.parts.forEach(part => {
+                if (answer) {
                     htmlContent += `
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-size: 11px; color: #000000; font-weight: bold; margin-bottom: 3px;">
-                                ${part.fullName}
-                            </div>
-                            <div style="font-size: 10px; color: #475569; margin-bottom: 6px; background-color: #f8fafc; padding: 5px 8px; border-left: 2px solid #475569; border-radius: 2px;">
-                                ${part.description}
-                            </div>
+                        <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 6px; margin-bottom: 3px; font-weight: bold;">
+                            Python Source Code
+                        </div>
+                        <pre style="background-color: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 9px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; margin: 0 0 8px 0; line-height: 1.3;">${escapeHtml(answer.code)}</pre>
+                        
+                        <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 6px; margin-bottom: 3px; font-weight: bold;">
+                            Expected Console Output
+                        </div>
+                        <pre style="background-color: #0f172a; color: #10b981; border: 1px solid #1e293b; border-radius: 4px; padding: 8px; font-family: monospace; font-size: 9px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; margin: 0 0 10px 0; line-height: 1.3;">${escapeHtml(answer.output)}</pre>
                     `;
-                    
-                    const answer = answersData[part.id];
-                    if (answer) {
-                        if (Array.isArray(answer)) {
-                            answer.forEach(sub => {
-                                htmlContent += `
-                                    <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 5px; margin-bottom: 3px; font-weight: bold;">
-                                        Code: ${sub.title}
-                                    </div>
-                                    <pre style="background-color: #f8fafc; color: #000000; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 8px; font-family: monospace; font-size: 9.5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; margin: 0 0 6px 0; line-height: 1.25;">${escapeHtml(sub.code)}</pre>
-                                `;
-                            });
-                        } else {
-                            htmlContent += `
-                                <div style="font-size: 9px; text-transform: uppercase; color: #475569; margin-top: 5px; margin-bottom: 3px; font-weight: bold;">
-                                    Code Implementation
-                                </div>
-                                <pre style="background-color: #f8fafc; color: #000000; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 8px; font-family: monospace; font-size: 9.5px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; word-break: break-all; margin: 0; line-height: 1.25;">${escapeHtml(answer.code)}</pre>
-                            `;
-                        }
-                    }
-                    htmlContent += `</div>`;
-                });
+                }
                 
                 htmlContent += `</div>`;
             });
@@ -327,33 +303,13 @@ export default function Home() {
         document.body.appendChild(script);
     };
 
-    // Find current active set and part
-    const currentSet = algorithmsData.find(s => s.id === selectedSetId) || algorithmsData[0];
-    const currentPart = currentSet.parts[selectedPartIndex] || currentSet.parts[0];
+    // Find current active question
+    const currentQuestion = questionsData.find(q => q.id === selectedQuestionId) || questionsData[0];
+    const answerEntry = answersData[currentQuestion.id] || answersData['q1'];
 
-    // Get answers data
-    const answerEntry = answersData[currentPart.id];
-    let displayCode = '';
-    let displayOutput = '';
-    let hasSubTabs = false;
-    let subTabs = [];
-
-    if (answerEntry) {
-        if (Array.isArray(answerEntry)) {
-            hasSubTabs = true;
-            subTabs = answerEntry.map(entry => entry.title);
-            const activeEntry = answerEntry[activeSubTab] || answerEntry[0];
-            displayCode = activeEntry.code;
-            displayOutput = activeEntry.output;
-        } else {
-            displayCode = answerEntry.code;
-            displayOutput = answerEntry.output;
-        }
-    }
-
-    // Determine filename for download
-    const rawFilename = `${currentPart.id}_${currentPart.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`;
-    const filename = `${rawFilename}.ipynb`;
+    const displayCode = answerEntry ? answerEntry.code : '';
+    const displayOutput = answerEntry ? answerEntry.output : '';
+    const filename = answerEntry?.filename || `${currentQuestion.id}.ipynb`;
 
     // Passcode Lock Screen Takeover Layout
     if (!isAuthenticated) {
@@ -388,7 +344,7 @@ export default function Home() {
                                     <div 
                                         key={index} 
                                         style={{ 
-                                            color: log.text.includes('FATAL') || log.text.includes('CRITICAL') 
+                                             color: log.text.includes('FATAL') || log.text.includes('CRITICAL') 
                                                 ? '#ef4444' 
                                                 : log.text.includes('WARN') || log.text.includes('ALERT') 
                                                     ? '#fbbf24' 
@@ -491,7 +447,7 @@ export default function Home() {
                     <div className={styles.content}>
                         <header className={styles.header}>
                             <h1 className={styles.title}>AIML Lab Manual Portal</h1>
-                            <p className={styles.subtitle}>Curated codes and outputs according to Sets</p>
+                            <p className={styles.subtitle}>Curated codes, outputs, and matplotlib plots for 4 core questions</p>
                         </header>
                     </div>
                 </div>
@@ -523,7 +479,7 @@ export default function Home() {
                             <span className={styles.sidebarLogo}>🤖</span>
                             <div style={{ textAlign: 'left' }}>
                                 <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#ffffff' }}>AIML Lab Portal</div>
-                                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Regulation R21 - VI Sem</div>
+                                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>4 Core Experiments</div>
                             </div>
                         </div>
                         {/* Close button for Mobile */}
@@ -578,17 +534,17 @@ export default function Home() {
                     </div>
 
                     <nav className={styles.setNav}>
-                        <div className={styles.navSectionTitle}>Lab Sets</div>
-                        {algorithmsData.map((set) => (
+                        <div className={styles.navSectionTitle}>Lab Questions</div>
+                        {questionsData.map((q) => (
                             <button
-                                key={set.id}
-                                onClick={() => handleSetSelect(set.id)}
-                                className={`${styles.setNavItem} ${selectedSetId === set.id ? styles.activeSet : ''}`}
+                                key={q.id}
+                                onClick={() => handleQuestionSelect(q.id)}
+                                className={`${styles.setNavItem} ${selectedQuestionId === q.id ? styles.activeSet : ''}`}
                             >
-                                <span className={styles.setNumber}>{set.name.split(' ')[1]}</span>
+                                <span className={styles.setNumber}>Q{q.number}</span>
                                 <div className={styles.setDetails}>
-                                    <div className={styles.setName}>{set.name}</div>
-                                    <div className={styles.setDescription}>{set.description}</div>
+                                    <div className={styles.setName}>Question {q.number}</div>
+                                    <div className={styles.setDescription}>{q.shortTitle}</div>
                                 </div>
                             </button>
                         ))}
@@ -607,55 +563,41 @@ export default function Home() {
                                 ☰
                             </button>
                             <div style={{ textAlign: 'left' }}>
-                                <h1 className={styles.dashboardTitle}>{currentSet.name}</h1>
-                                <p className={styles.dashboardSubtitle}>{currentSet.description}</p>
+                                <h1 className={styles.dashboardTitle}>Question {currentQuestion.number}</h1>
+                                <p className={styles.dashboardSubtitle}>{currentQuestion.shortTitle}</p>
                             </div>
                         </div>
-                        <div className={styles.badge}>R21 Syllabus</div>
+                        <div className={styles.badge}>{currentQuestion.category}</div>
                     </header>
 
-                    {/* Part Tabs Selector */}
-                    {currentSet.parts.length > 1 && (
-                        <div className={styles.tabsContainer}>
-                            {currentSet.parts.map((part, index) => (
-                                <button
-                                    key={part.id}
-                                    onClick={() => handlePartSelect(index)}
-                                    className={`${styles.tabItem} ${selectedPartIndex === index ? styles.activeTab : ''}`}
-                                >
-                                    {part.title}
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                    {/* Quick Question Tabs Selector */}
+                    <div className={styles.tabsContainer}>
+                        {questionsData.map((q) => (
+                            <button
+                                key={q.id}
+                                onClick={() => handleQuestionSelect(q.id)}
+                                className={`${styles.tabItem} ${selectedQuestionId === q.id ? styles.activeTab : ''}`}
+                            >
+                                Q{q.number}: {q.shortTitle}
+                            </button>
+                        ))}
+                    </div>
 
                     {/* Details Panel */}
                     <div className={styles.detailsContainer}>
                         <div className={styles.questionCard}>
-                            <h3 className={styles.partHeader}>{currentPart.fullName}</h3>
-                            <p className={styles.partDescription}>{currentPart.description}</p>
+                            <h3 className={styles.partHeader}>{currentQuestion.fullName}</h3>
+                            <p className={styles.partDescription}>{currentQuestion.description}</p>
 
                             {/* Implementation details */}
                             <div className={styles.implementationHeader}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '1.25rem' }}>📓</span>
-                                    <span style={{ fontWeight: '700', fontSize: '1rem', color: '#cbd5e1' }}>Jupyter Notebook Source</span>
+                                    <span style={{ fontWeight: '700', fontSize: '1rem', color: '#cbd5e1' }}>Jupyter Notebook Source Code</span>
                                 </div>
-
-                                {/* Code Sub tabs (Scratch vs Scikit-learn) */}
-                                {hasSubTabs && (
-                                    <div className={styles.subTabs}>
-                                        {subTabs.map((tabTitle, idx) => (
-                                            <button
-                                                key={idx}
-                                                onClick={() => { setActiveSubTab(idx); setCopied(false); }}
-                                                className={`${styles.subTabItem} ${activeSubTab === idx ? styles.activeSubTabItem : ''}`}
-                                            >
-                                                {tabTitle}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                                <div style={{ fontSize: '0.8rem', color: '#818cf8', fontWeight: '600' }}>
+                                    Python 3 • {filename}
+                                </div>
                             </div>
 
                             {/* Python Code Display */}
@@ -701,6 +643,9 @@ export default function Home() {
                                     </pre>
                                 </div>
                             )}
+
+                            {/* Matplotlib Graphical Visualizations / Plot Diagrams */}
+                            <MatplotlibPlot questionId={currentQuestion.id} plotType={answerEntry?.plots?.[0]?.type} />
                         </div>
                     </div>
                 </main>
